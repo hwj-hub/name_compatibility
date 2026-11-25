@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#db2777">
+<title>이름궁합 테스트 · 이름 궁합 계산기 — 획수 계산 과정, 여러 명 궁합표, 100% 나오는 이름 찾기 (무료)</title>
+<meta name="description" content="두 사람 이름을 넣으면 획수로 이름궁합 점수를 계산해 드려요. 글자를 번갈아 놓고 획수를 더해 내려가는 숫자 삼각형을 한 줄씩 보여 주고, 순서를 바꾼 점수까지 함께. 펜 획수·선 개수 두 가지 획수 표, 성 빼기·애칭으로 점수 올리기, 친구 여러 명 순위와 모임 궁합표, 흔한 이름 213개에서 나와 100% 나오는 이름 찾기, 결과 그림 저장·링크 공유까지. 설치·가입 없이 무료, 재미로 보세요.">
+<meta property="og:title" content="이름궁합 테스트 · 우리 이름 궁합은 몇 %?">
+<meta property="og:description" content="획수로 보는 이름 궁합 — 계산 과정 그대로, 순서 바꾼 점수, 여러 명 궁합표, 100% 나오는 이름 찾기.">
+<meta property="og:type" content="website">
+<!-- 링크 미리보기 그림: 스크래퍼는 절대 주소만 읽으므로 배포 주소로 적는다. 그림은 make_thumbnail.py 가 만든 og-image.png(1200×630) -->
+<meta property="og:image" content="https://hwj-hub.github.io/name_compatibility/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="이름궁합 테스트 — 홍길동과 성춘향의 이름 획수를 번갈아 적고 더해 내려가 궁합 점수가 나오는 화면">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E%F0%9F%92%9E%3C/text%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  color-scheme:light dark;
+  --bg:#f2f4f8; --card:#fff; --card2:#f7f8fb; --fg:#151a26; --muted:#556072; --line:#e0e4ec;
+  --accent:#0d7a5f; --accent2:#2563eb; --afg:#fff;
+  --ok:#0f766e; --okbg:#e6f3f1; --warn:#b45309; --warnbg:#fef4e6; --danger:#c81e1e; --dangerbg:#fdecec;
+  --info:#475569; --infobg:#eef1f6;
+  --shadow:0 1px 2px rgba(16,24,40,.05),0 8px 24px -14px rgba(16,24,40,.32);
+  --r:16px;
+}
+@media (prefers-color-scheme:dark){
+ :root{
+  --bg:#0c0f16; --card:#161b26; --card2:#121620; --fg:#eef1f8; --muted:#a8b1c4; --line:#2a3244;
+  --accent:#5eead4; --accent2:#93c5fd; --afg:#062a22;
+  --ok:#34d399; --okbg:#0f2a22; --warn:#fbbf24; --warnbg:#2a2110; --danger:#f87171; --dangerbg:#2c1414;
+  --info:#c3ccd8; --infobg:#1f242e;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -16px rgba(0,0,0,.8);
+ }
+}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);line-height:1.55;word-break:keep-all;overflow-wrap:anywhere;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",Roboto,sans-serif;
+  -webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:1180px;margin:0 auto;padding:0 14px calc(70px + env(safe-area-inset-bottom))}
+.hide{display:none !important}
+.nw{white-space:nowrap}
+
+/* ── 인앱 브라우저 안내 띠 ── 앱 안 WebView 는 파일을 내려받지 못한다 */
+.iabar{display:none;align-items:center;gap:10px;margin:10px 0 0;padding:11px 12px;border-radius:12px;
+  background:var(--warnbg);border:1px solid color-mix(in srgb,var(--warn) 34%,transparent);line-height:1.5}
+body.inapp .iabar{display:flex}
+.iabar .ia-t{flex:1 1 auto;min-width:0;font-size:12.5px;font-weight:700;color:var(--fg)}
+.iabar .ia-t small{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:2px}
+.iabar .ia-go{flex:0 0 auto;font:inherit;font-size:12.5px;font-weight:800;color:#fff;border:0;border-radius:999px;
+  padding:9px 14px;min-height:38px;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+@media (prefers-color-scheme:dark){.iabar .ia-go{color:var(--afg)}}
+/* 닫기는 휴대폰에서 누르기 쉽게 36px(터치 대상 최소) */
+.iabar .ia-x{flex:0 0 auto;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;
+  color:var(--muted);font:inherit;font-size:12px;line-height:1;cursor:pointer}
+/* ── 앱 안에서 열었을 때 막는 창 ── 토스트(z-index 99)보다는 아래에 둔다 */
+.iamodal{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;padding:18px;
+  background:rgba(8,14,20,.72);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+body.ia-lock{overflow:hidden}
+body.ia-lock .iamodal{display:flex}
+body.ia-lock .wrap{pointer-events:none}
+.iasheet{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);
+  width:100%;max-width:420px;max-height:92vh;overflow:auto;padding:22px 18px 16px;text-align:center}
+.iasheet .iaic{font-size:34px;line-height:1;margin-bottom:10px}
+.iasheet h2{font-size:17.5px;font-weight:800;letter-spacing:-.02em;margin:0 0 10px;line-height:1.45}
+.iap{font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.7;margin:0 0 14px}
+.iap b{color:var(--fg);font-weight:800}
+.iasteps{text-align:left;margin:0 0 16px;padding:12px 14px 12px 32px;border-radius:12px;background:var(--card2);
+  font-size:13px;font-weight:600;color:var(--muted);line-height:1.7}
+.iasteps li+li{margin-top:5px}
+.iasteps b{color:var(--fg);font-weight:800}
+.iabtn{display:block;width:100%;font:inherit;font-size:15px;font-weight:800;color:#fff;border:0;border-radius:12px;
+  padding:14px;min-height:52px;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:var(--shadow)}
+@media (prefers-color-scheme:dark){.iabtn{color:var(--afg)}}
+.iafine{margin:12px 0 0;font-size:12px;font-weight:600;color:var(--muted);line-height:1.6}
+.iafine button{font:inherit;font-size:12px;font-weight:700;color:var(--muted);background:none;border:0;padding:6px 8px;
+  text-decoration:underline;cursor:pointer;min-height:36px}
+.dwarn{margin:10px 0 0;padding:10px 12px;border-radius:10px;background:var(--warnbg);font-size:12.5px;font-weight:700;line-height:1.6}
+/* 문장 속 단추라 줄 높이는 그대로 두고(음수 여백) 누르는 면만 넓힌다 */
+.dwarn button{font:inherit;font-size:12.5px;font-weight:800;color:var(--accent);background:none;border:0;padding:9px 2px;margin:-9px 0;
+  text-decoration:underline;cursor:pointer}
+
+/* ── 저장 완료 카드 ── 화면을 덮지 않고 본문 흐름 안에 펼친다 */
+#doneCard{border-color:color-mix(in srgb,var(--ok) 40%,var(--line))}
+.dmsg{margin:0 0 10px;font-size:14px;font-weight:700;line-height:1.6}
+.dsteps{margin:0;padding:0 0 0 20px;font-size:13px;font-weight:600;line-height:1.75;color:var(--muted)}
+.dsteps b{color:var(--fg);font-weight:800}
+
+header{text-align:center;padding:14px 0 2px}
+.logo{display:inline-flex;align-items:center;gap:9px;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.logo .ico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:17px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:var(--shadow)}
+.tag{font-size:14.5px;font-weight:600;color:var(--muted);margin:8px 0 0;text-wrap:balance}
+.tag b{color:var(--fg)}
+.badges{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.badge{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--okbg);color:var(--ok);border:1px solid transparent}
+.badge.gray{background:var(--card2);color:var(--muted);border-color:var(--line)}
+
+.toolbar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+
+/* ── 두 칸 배치 · 넓은 화면에서 미리보기를 옆에 붙인다 ── */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:0 16px}
+@media (min-width:980px){
+  .layout{grid-template-columns:minmax(0,1fr) 430px;align-items:start}
+  /* 미리보기 높이를 화면에 맞춰 줄여 「PDF로 저장」이 화면 안에 남게 한다.
+     옆 칸은 화면 높이 안에서 따로 스크롤한다 — sticky 만 두면 옆 칸이 화면보다 길 때
+     맨 위에서 저장했을 때 펼쳐지는 완료 카드가 화면 아래로 빠진다 */
+  .side{position:sticky;top:8px;max-height:100vh;overflow:auto;padding-bottom:10px;scrollbar-width:thin}
+  .side .pv-pages{max-height:calc(100vh - 480px);min-height:320px;overflow:auto}
+}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin-top:14px}
+.card h2{font-size:12px;font-weight:800;color:var(--muted);margin:0 0 12px;letter-spacing:.07em;
+  display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card h2 .n{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;margin-right:6px;
+  background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);letter-spacing:0;font-size:11.5px}
+.card h2 .opt{font-size:10.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;letter-spacing:.02em}
+
+/* ── 폼 ── */
+.row{margin-top:14px}
+.lab{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:13.5px;font-weight:800;margin-bottom:7px}
+.lab .hint{font-weight:500;color:var(--muted);font-size:12px;text-align:right}
+.lab>span:first-child{flex:0 0 auto}
+input[type=text],input[type=tel],input[type=date],input[type=time],select,textarea{font:inherit;font-size:16px;color:var(--fg);background:var(--card2);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:46px;width:100%;min-width:0}
+input[type=date],input[type=time]{-webkit-appearance:none;appearance:none;display:block}
+input::placeholder,textarea::placeholder{color:color-mix(in srgb,var(--muted) 70%,transparent)}
+textarea{resize:vertical;line-height:1.6}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.grid2{display:flex;gap:10px;flex-wrap:wrap}
+.grid2>div{flex:1 1 180px;min-width:0}
+.grid2>div.wide{flex:2 1 240px}
+.seg{display:flex;gap:5px;flex-wrap:wrap}
+.seg button,.rgrid button,.tgrid button{flex:1 1 0;border:1px solid var(--line);background:var(--card2);color:var(--muted);font:inherit;
+  font-size:13.5px;font-weight:800;padding:9px 8px;border-radius:10px;cursor:pointer;min-height:46px;transition:.15s;min-width:72px}
+.seg button:hover,.rgrid button:hover,.tgrid button:hover{border-color:var(--accent)}
+.seg button.on,.rgrid button.on,.tgrid button.on{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.seg button .s,.rgrid button .s,.tgrid button .s{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-top:1px;line-height:1.4}
+.seg button.on .s,.rgrid button.on .s,.tgrid button.on .s{color:var(--accent)}
+.rgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.rgrid button{min-width:0;padding:8px 6px}
+@media (min-width:600px){.rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* 문서 종류 — 휴대폰 2칸, 넓으면 4칸 */
+.tgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.tgrid button{min-width:0;padding:11px 10px;text-align:left;min-height:64px}
+.tgrid button b{display:block;font-size:14.5px;font-weight:800;color:var(--fg)}
+.tgrid button.on b{color:var(--accent)}
+@media (min-width:600px){.tgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.rinfo{margin-top:10px;border-radius:11px;padding:9px 11px 9px 12px;font-size:12.5px;font-weight:700;line-height:1.65;border-left:3px solid}
+.rinfo:empty{display:none}
+.rinfo.ok{background:var(--okbg);color:var(--ok)}
+.rinfo.warn{background:var(--warnbg);color:var(--warn)}
+.rinfo.info{background:var(--infobg);color:var(--info)}
+.chk{display:flex;align-items:flex-start;gap:9px;font-size:14px;font-weight:700;cursor:pointer;padding:8px 0;margin-top:4px}
+.chk input{width:20px;height:20px;accent-color:var(--accent);flex:0 0 auto;margin:2px 0 0}
+.chk .d{display:block;font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.6;margin-top:1px}
+.unit{display:flex;gap:8px;align-items:center}
+.unit input{flex:1 1 auto}
+.unit span{flex:0 0 auto;font-size:14px;font-weight:800;color:var(--muted)}
+.unit.short input{flex:0 1 90px;text-align:center}
+.sub{border-left:3px solid color-mix(in srgb,var(--accent) 30%,transparent);padding-left:12px;margin-left:2px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chips:empty{display:none}
+.chips button{border:1px solid var(--line);background:var(--card);color:var(--muted);font:inherit;font-size:12.5px;font-weight:700;
+  padding:6px 11px;border-radius:999px;cursor:pointer;min-height:38px;text-align:left}
+.chips button:hover{border-color:var(--accent);color:var(--accent)}
+.chips button.on{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,transparent)}
+.party{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:12px;background:var(--card2)}
+.party.first{margin-top:0}
+.party .grid2{margin-top:8px}
+.party .grid2:first-of-type{margin-top:0}
+.party input,.party textarea{background:var(--card)}
+.ph{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;margin-bottom:9px}
+.ph em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;background:var(--card)}
+.fine{font-size:12px;font-weight:600;color:var(--muted);line-height:1.65;margin:9px 0 0}
+.fine b{color:var(--fg)}
+.cnote{font-size:12px;font-weight:700;color:var(--accent);margin:7px 0 0;line-height:1.6}
+.cnote:empty{display:none}
+
+.mini{border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;font-size:13px;font-weight:700;
+  padding:9px 14px;border-radius:999px;cursor:pointer;min-height:42px;transition:.15s}
+.mini:hover{border-color:var(--accent)}
+.btn{flex:1 1 130px;border:1px solid var(--line);background:var(--card2);color:var(--fg);font:inherit;font-size:14px;font-weight:800;
+  padding:11px 12px;border-radius:12px;cursor:pointer;min-height:48px;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-align:center}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:progress}
+.btn.pri{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent;box-shadow:var(--shadow)}
+@media (prefers-color-scheme:dark){.btn.pri{color:var(--afg)}}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.actions .btn.pri{flex-basis:100%}
+
+/* ── 결과 카드 ── */
+.pv h2 .pvinfo{letter-spacing:.02em;font-weight:700}
+.pv-pages{display:flex;flex-direction:column;gap:12px;background:color-mix(in srgb,var(--muted) 14%,var(--card2));border-radius:12px;padding:12px;
+  border:1px solid var(--line)}
+.pv-pages canvas{display:block;width:100%;height:auto;background:#fff;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,.18),0 6px 18px -10px rgba(0,0,0,.35);cursor:zoom-in}
+
+/* ── 점검 ── */
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.checks li{position:relative;border-radius:11px;padding:9px 11px 9px 34px;font-size:12.5px;font-weight:600;line-height:1.65}
+.checks li b{font-weight:800}
+.checks li::before{position:absolute;left:10px;top:9px;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;
+  font-size:10.5px;font-weight:900;line-height:1}
+.checks li.ok{background:var(--okbg);color:var(--ok)}
+.checks li.ok::before{content:"✓";background:var(--ok);color:var(--okbg)}
+.checks li.info{background:var(--infobg);color:var(--info)}
+.checks li.info::before{content:"i";background:var(--info);color:var(--infobg)}
+.checks li.warn{background:var(--warnbg);color:var(--warn)}
+.checks li.warn::before{content:"!";background:var(--warn);color:var(--warnbg)}
+.checks li.bad{background:var(--dangerbg);color:var(--danger)}
+.checks li.bad::before{content:"✕";background:var(--danger);color:var(--dangerbg)}
+
+/* ── 안내 ── */
+.steps{list-style:none;margin:0;padding:0;counter-reset:st}
+.steps li{position:relative;padding-left:32px;margin-bottom:12px;font-size:14px;font-weight:600;line-height:1.7;counter-increment:st}
+.steps li:last-child{margin-bottom:0}
+.steps li::before{content:counter(st);position:absolute;left:0;top:1px;width:22px;height:22px;border-radius:7px;display:grid;place-items:center;
+  font-size:12px;font-weight:800;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+.steps li b{font-weight:800}
+.steps li .d{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.tbw{overflow-x:auto;margin:0 -2px;-webkit-overflow-scrolling:touch}
+table.kt{width:100%;min-width:560px;border-collapse:collapse;font-size:13px;line-height:1.6}
+table.kt th,table.kt td{border:1px solid var(--line);padding:9px 10px;vertical-align:top;text-align:left}
+table.kt th{background:var(--card2);font-weight:800;white-space:nowrap}
+table.kt td b{font-weight:800}
+table.kt td.k{font-weight:800;white-space:nowrap}
+.tnote{font-size:12px;font-weight:600;color:var(--muted);line-height:1.7;margin:10px 0 0}
+details{border-top:1px solid var(--line);padding:12px 0}
+details:first-of-type{border-top:0}
+summary{cursor:pointer;font-weight:700;font-size:14px;list-style:none;padding:10px 0;margin:-10px 0}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"＋ ";color:var(--accent);font-weight:800}
+details[open] summary::before{content:"－ "}
+details p{margin:8px 0 0;font-size:13.5px;color:var(--muted);line-height:1.8}
+details p b{color:var(--fg)}
+
+footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px;line-height:1.8}
+footer b{color:var(--fg)}
+footer a{color:inherit}
+
+/* ══ 주의 문구 ══ */
+.nbx{border:1px solid var(--warn);border-radius:14px;background:var(--warnbg);padding:14px 15px;margin-top:14px}
+.nbx-h{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:800;color:var(--warn);margin:0 0 10px}
+.nbx-h .ic{flex:0 0 auto;width:19px;height:19px;border-radius:6px;background:var(--warn);color:var(--warnbg);
+  font-size:12px;font-weight:800;display:grid;place-items:center;line-height:1}
+.nbx ul{list-style:none;margin:0;padding:0}
+.nbx li{position:relative;padding-left:12px;margin-bottom:7px;font-size:12px;font-weight:600;line-height:1.68;color:var(--warn)}
+.nbx li:last-child{margin-bottom:0}
+.nbx li::before{content:"·";position:absolute;left:1px;top:-1px;font-weight:800}
+.nbx li b{font-weight:800}
+.nbx .nbx-f{margin:11px 0 0;padding-top:10px;border-top:1px solid color-mix(in srgb,var(--warn) 32%,transparent);
+  font-size:12px;font-weight:700;line-height:1.72;color:var(--warn)}
+.nbx .nbx-f b{font-weight:800}
+
+/* ── 모바일 하단 바 ── */
+#mbar{position:fixed;left:0;right:0;bottom:0;z-index:50;transform:translateY(115%);transition:transform .22s;
+  background:var(--card);border-top:1px solid var(--line);box-shadow:0 -8px 22px -14px rgba(0,0,0,.55);
+  padding:9px 14px calc(9px + env(safe-area-inset-bottom))}
+#mbar.on{transform:none}
+#mbar .in{max-width:700px;margin:0 auto;display:flex;align-items:center;gap:10px}
+#mbar .k{flex:1 1 auto;min-width:0;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.03em}
+#mbar .k b{display:block;font-size:13.5px;font-weight:800;color:var(--fg);letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#mbar .go{flex:0 0 auto;font:inherit;font-size:13px;font-weight:800;color:#fff;padding:10px 15px;border-radius:999px;border:0;cursor:pointer;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));min-height:42px}
+@media (prefers-color-scheme:dark){#mbar .go{color:var(--afg)}}
+@media (min-width:980px){#mbar{display:none}}
+
+#toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#151b2b;color:#fff;font-size:13.5px;font-weight:700;line-height:1.5;
+  padding:10px 16px;border-radius:14px;width:max-content;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:92vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-color-scheme:dark){#toast{background:#e8edf8;color:#0b1430}}
+
+@media (max-width:430px){
+  .lab{flex-direction:column;align-items:stretch;gap:2px}
+  .lab .hint{text-align:left}
+  .card{padding:14px}
+  .seg button{font-size:13px;min-width:0}
+  .rgrid button{font-size:13px}
+  .tag{font-size:14px}
+  .rsbox{padding-left:0}
+  .tgrid button b{font-size:14px}
+}
+/* ══ 이름궁합 — 색(분홍 → 보라) ══ */
+:root{--accent:#db2777;--accent2:#7c3aed;--pa:#db2777;--pb:#2563eb;--pabg:#fdf2f8;--pbbg:#eff6ff}
+@media (prefers-color-scheme:dark){
+ :root{--accent:#f9a8d4;--accent2:#c4b5fd;--afg:#2a0a1c;--pa:#f9a8d4;--pb:#93c5fd;--pabg:#3a1428;--pbbg:#14223d}
+}
+.gp{font-size:14px;font-weight:600;color:var(--muted);line-height:1.8;margin:10px 0 0}
+.gp b{color:var(--fg);font-weight:800}
+.row.first{margin-top:4px}
+.wh{font-size:14px;font-weight:800;margin:18px 0 8px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.wh span{font-size:12px;font-weight:600;color:var(--muted)}
+.seg.sm button{min-height:42px;font-size:13px}
+.big1{font-size:16px;min-height:54px}
+.lnk{font:inherit;font-size:12px;font-weight:700;color:var(--accent);background:none;border:0;padding:6px 4px;text-decoration:underline;cursor:pointer}
+
+/* ── 보기 고르기(탭) ── */
+.tabs{display:flex;gap:6px;margin:16px 0 0;padding:5px;border-radius:14px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.tabs button{flex:1 1 0;min-width:0;border:0;background:transparent;color:var(--muted);font:inherit;font-size:14px;font-weight:800;
+  padding:10px 6px;border-radius:10px;cursor:pointer;min-height:46px;line-height:1.3}
+.tabs button.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+@media (prefers-color-scheme:dark){.tabs button.on{color:var(--afg)}}
+@media (max-width:430px){.tabs button{font-size:13px;padding:9px 4px}}
+
+/* ── 이름 넣기 ── */
+.names{display:flex;align-items:flex-end;gap:8px}
+.names .nm{flex:1 1 0;min-width:0}
+.names input{font-size:18px;font-weight:800;text-align:center;letter-spacing:.06em}
+#inA{border-color:color-mix(in srgb,var(--pa) 45%,var(--line));background:var(--pabg)}
+#inB{border-color:color-mix(in srgb,var(--pb) 45%,var(--line));background:var(--pbbg)}
+.names .lab{flex-direction:column;align-items:stretch;gap:1px}
+.names .lab .hint{text-align:left}
+.swap{flex:0 0 auto;width:42px;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--accent);
+  font:inherit;font-size:18px;font-weight:900;cursor:pointer}
+.swap:hover{border-color:var(--accent)}
+details.how{border:1px solid var(--line);border-radius:12px;padding:12px 12px 6px;margin-top:12px;background:var(--card2)}
+details.how summary{margin:0;padding:2px 0 8px;font-size:13.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+details.how summary .cur{font-size:11.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;background:var(--card)}
+details.how .seg button{background:var(--card)}
+details.how .seg button.on{background:color-mix(in srgb,var(--accent) 10%,var(--card))}
+.nick{margin-top:12px}
+
+/* ── 점수 ── */
+.score{text-align:center;padding:6px 0 4px}
+.who{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-size:20px;font-weight:800;letter-spacing:.04em}
+.who #rA{color:var(--pa)}
+.who #rB{color:var(--pb)}
+.who i{font-style:normal;color:var(--accent);font-size:18px}
+.big{margin-top:2px;line-height:1}
+.big b{font-size:76px;font-weight:900;letter-spacing:-.04em;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums}
+.big span{font-size:30px;font-weight:900;color:var(--accent2);margin-left:2px}
+.grade{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:6px;font-size:20px;font-weight:900}
+.gsub{margin:6px auto 0;max-width:430px;font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.7}
+.orders{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.ord{border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:9px 8px;cursor:pointer;font:inherit;color:var(--fg);min-height:58px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.ord .ol{font-size:12px;font-weight:700;color:var(--muted)}
+.ord b{font-size:20px;font-weight:900}
+.ord.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--card))}
+.ord.on .ol{color:var(--accent)}
+
+/* ── 숫자 삼각형 ── */
+.triwrap{overflow-x:auto;margin:12px -4px 0;padding:4px;-webkit-overflow-scrolling:touch}
+.tri{--c:34px;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:max-content;margin:0 auto;padding:12px 8px;
+  border-radius:14px;background:var(--card2);border:1px solid var(--line)}
+.tri .tr{display:flex;gap:5px;justify-content:center}
+.tri .tr>*{width:var(--c);height:var(--c);border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:900;
+  font-size:calc(var(--c) * .46);font-variant-numeric:tabular-nums;background:var(--card);border:1px solid var(--line);color:var(--fg)}
+.tri .tr.ch>*{border-radius:9px;font-size:calc(var(--c) * .5);border-width:2px}
+.tri .tr.ch .p0{color:var(--pa);border-color:color-mix(in srgb,var(--pa) 55%,transparent);background:var(--pabg)}
+.tri .tr.ch .p1{color:var(--pb);border-color:color-mix(in srgb,var(--pb) 55%,transparent);background:var(--pbbg)}
+.tri .tr.n0>*{background:color-mix(in srgb,var(--accent) 6%,var(--card))}
+.tri .tr.last>*{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:0;transform:scale(1.18)}
+@media (prefers-color-scheme:dark){.tri .tr.last>*{color:var(--afg)}}
+.tri .tr.last{margin-top:4px}
+.tri.anim .tr{opacity:0;transform:translateY(-6px);transition:opacity .25s,transform .25s}
+.tri.anim .tr.in{opacity:1;transform:none}
+.tri .tr.hl>*{outline:2px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:1px}
+@media (max-width:430px){.tri{--c:28px;gap:4px}.tri .tr{gap:4px}}
+.tri.st{--c:30px;margin-top:10px}
+@media (prefers-reduced-motion:reduce){.tri.anim .tr{transition:none;opacity:1;transform:none}}
+details.parts{border-top:0;padding:8px 0 0}
+details.parts summary{font-size:13px;color:var(--accent)}
+.plist,.exparts{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.plist li,.exparts li{font-size:12.5px;font-weight:600;color:var(--muted);background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:7px 9px;line-height:1.5}
+.plist li b,.exparts li b{color:var(--fg);font-weight:900}
+.plist li .c{font-size:16px;font-weight:900;margin-right:4px}
+.plist li.p0 .c{color:var(--pa)}
+.plist li.p1 .c{color:var(--pb)}
+
+/* ── 실험실 표 ── */
+table.lab-t{width:100%;min-width:0;text-align:center}
+table.lab-t th,table.lab-t td{text-align:center;vertical-align:middle;padding:7px 6px}
+table.lab-t td.k{text-align:left;white-space:normal;font-size:12.5px}
+table.lab-t td.k b{font-weight:900}
+table.lab-t td.k small{display:block;font-size:11px;font-weight:600;color:var(--muted)}
+table.lab-t button{font:inherit;font-size:15px;font-weight:900;border:1px solid var(--line);background:var(--card2);color:var(--fg);border-radius:9px;
+  min-width:52px;min-height:40px;cursor:pointer;font-variant-numeric:tabular-nums}
+table.lab-t button:hover{border-color:var(--accent)}
+table.lab-t button.best{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent}
+@media (prefers-color-scheme:dark){table.lab-t button.best{color:var(--afg)}}
+table.lab-t button.cur{outline:2px solid var(--accent);outline-offset:1px}
+table.lab-t th small{display:block;font-size:10.5px;font-weight:600;color:var(--muted)}
+@media (max-width:430px){
+ table.lab-t th,table.lab-t td{padding:6px 2px}
+ table.lab-t th{font-size:11.5px}
+ table.lab-t td.k{font-size:11.5px;padding-left:5px}
+ table.lab-t button{min-width:44px;font-size:14px}
+ .tabs .wd{display:none}
+}
+
+/* ── 여러 명 ── */
+#gIn{font-size:16px;line-height:1.7}
+.podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.podium:empty{display:none}
+.podium .pd{border:1px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center;background:var(--card2);cursor:pointer;font:inherit;color:var(--fg);min-width:0}
+.podium .pd:first-child{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--card))}
+.podium .pd .md{font-size:22px;line-height:1}
+.podium .pd .nn{display:block;font-size:13.5px;font-weight:800;margin-top:4px;overflow-wrap:anywhere}
+.podium .pd .sc{display:block;font-size:22px;font-weight:900;color:var(--accent);margin-top:2px}
+.podium .pd .gl{display:block;font-size:11.5px;font-weight:700;color:var(--muted)}
+.rank{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.rank li button{width:100%;display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:12px;
+  padding:8px 10px;cursor:pointer;font:inherit;color:var(--fg);text-align:left;min-height:48px}
+.rank li button:hover{border-color:var(--accent)}
+.rank .no{flex:0 0 auto;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:12px;font-weight:900;
+  background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent)}
+.rank .nm{flex:1 1 auto;min-width:0;font-size:14.5px;font-weight:800;overflow-wrap:anywhere}
+.rank .nm small{display:block;font-size:11.5px;font-weight:600;color:var(--muted)}
+.rank .bar{flex:0 0 70px;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.rank .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.rank .sc{flex:0 0 auto;font-size:17px;font-weight:900;min-width:52px;text-align:right;font-variant-numeric:tabular-nums}
+@media (max-width:430px){.rank .bar{flex-basis:40px}}
+table.mat{border-collapse:collapse;font-size:12.5px;margin:0 auto}
+table.mat th,table.mat td{border:1px solid var(--line);padding:0;text-align:center;min-width:42px;height:38px}
+table.mat th{background:var(--card2);font-weight:800;padding:4px 6px;white-space:nowrap}
+table.mat td button{width:100%;height:100%;min-height:38px;border:0;background:transparent;font:inherit;font-weight:900;color:var(--fg);cursor:pointer;font-variant-numeric:tabular-nums}
+table.mat td.self{background:repeating-linear-gradient(45deg,var(--card2),var(--card2) 4px,var(--card) 4px,var(--card) 8px)}
+table.mat td.top button{color:#fff}
+@media (prefers-color-scheme:dark){table.mat td.top button{color:var(--afg)}}
+
+/* ── 100% 찾기 ── */
+#fSur{margin-top:8px}
+.fgrp h3{font-size:14px;font-weight:900;margin:14px 0 7px;display:flex;align-items:baseline;gap:8px}
+.fgrp h3 span{font-size:12px;font-weight:700;color:var(--muted)}
+.fgrp h3:first-child{margin-top:4px}
+.fgrp .chips{margin-top:0}
+.fgrp .chips button{font-size:14px;font-weight:800;color:var(--fg);min-height:40px}
+.fgrp .chips button small{font-size:11px;font-weight:700;color:var(--muted);margin-left:4px}
+
+/* ── 옆 칸 ── */
+.stk-c,.stk-v{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.stk-v{margin-top:8px}
+.stk-c span,.stk-v span{border:1px solid var(--line);border-radius:8px;background:var(--card2);text-align:center;padding:4px 0;font-size:13px;font-weight:800;line-height:1.25}
+.stk-c span i,.stk-v span i{display:block;font-style:normal;font-size:11.5px;font-weight:800;color:var(--accent)}
+.tips{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.tips li{font-size:13px;font-weight:600;color:var(--muted);line-height:1.7;padding-left:12px;position:relative}
+.tips li::before{content:"";position:absolute;left:0;top:.7em;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.tips li b{color:var(--fg);font-weight:800}
+
+/* ── 링크로 들어왔을 때 ── */
+#fromLink{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.fl-in{display:flex;align-items:center;gap:12px}
+.fl-ic{font-size:30px;line-height:1}
+.fl-t b{display:block;font-size:15.5px;font-weight:900}
+.fl-t span{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-top:2px;line-height:1.6}
+
+/* ── 획수 표(정적) ── */
+table.stk{min-width:0;width:auto;margin:10px 0 0}
+table.stk th,table.stk td{text-align:center;padding:6px 7px;white-space:nowrap}
+table.stk td.k{text-align:left}
+table.stk td.k small{font-weight:600;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- 네이버·카카오 앱 안에서 열렸을 때만 보이는 띠 (body.inapp) -->
+<div class="iabar" id="iabar">
+  <div class="ia-t"><span id="iaMsg">앱 안에서는 그림 저장이 안 될 수 있어요.</span>
+    <small id="iaSub">궁합 보기·링크 복사는 그대로 돼요.</small></div>
+  <button class="ia-go" id="iaGo" type="button">크롬에서 열기</button>
+  <button class="ia-x" id="iaX" type="button" aria-label="안내 닫기">✕</button>
+</div>
+
+<header>
+  <div class="logo"><span class="ico">💞</span><span>이름궁합 테스트</span></div>
+  <p class="tag"><b>두 이름 획수로 보는 궁합</b> · <span class="nw">계산 과정 그대로</span> · <span class="nw">순서 바꾼 점수</span> · <span class="nw">여러 명 궁합표</span> · <span class="nw">100% 이름 찾기</span></p>
+  <div class="badges">
+    <span class="badge">💞 커플 · 친구 · 가족</span>
+    <span class="badge gray">획수 표 두 가지</span>
+    <span class="badge gray">모임 궁합 순위</span>
+    <span class="badge gray">결과 그림 · 링크 공유</span>
+    <span class="badge gray">무료 · 설치·가입 없음</span>
+  </div>
+</header>
+
+<!-- 친구가 보낸 링크로 들어왔을 때 -->
+<section class="card hide" id="fromLink">
+  <div class="fl-in">
+    <div class="fl-ic" aria-hidden="true">💌</div>
+    <div class="fl-t"><b id="flT">친구가 보낸 이름궁합이에요</b><span id="flS">아래에서 계산 과정을 확인하고, 내 이름으로도 해 보세요.</span></div>
+  </div>
+  <div class="actions"><button class="btn pri" id="flMine" type="button">내 이름으로 해 보기</button></div>
+</section>
+
+<nav class="tabs" role="tablist" aria-label="보기 고르기">
+  <button type="button" role="tab" id="tb-pair" data-t="pair" class="on" aria-selected="true" aria-controls="tPair">💞 둘이서</button>
+  <button type="button" role="tab" id="tb-group" data-t="group" aria-selected="false" aria-controls="tGroup">👥 여러 명</button>
+  <button type="button" role="tab" id="tb-find" data-t="find" aria-selected="false" aria-controls="tFind">💯 100%<span class="wd"> 이름</span> 찾기</button>
+</nav>
+
+<div class="layout">
+<main id="main">
+
+  <!-- ══ 둘이서 ══ -->
+  <div id="tPair" role="tabpanel" aria-labelledby="tb-pair">
+  <section class="card" id="pairCard">
+    <h2><span><span class="n">1</span>두 사람 이름</span><span class="opt">성까지 넣는 게 보통이에요</span></h2>
+    <div class="names">
+      <div class="nm">
+        <label class="lab" for="inA"><span>먼저 쓸 이름</span><span class="hint">예: 홍길동</span></label>
+        <input type="text" id="inA" maxlength="10" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="내 이름" enterkeyhint="next" lang="ko">
+      </div>
+      <button class="swap" id="btnSwap" type="button" aria-label="두 이름 자리 바꾸기" title="자리 바꾸기">⇄</button>
+      <div class="nm">
+        <label class="lab" for="inB"><span>두 번째 이름</span><span class="hint">예: 성춘향</span></label>
+        <input type="text" id="inB" maxlength="10" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="상대 이름" enterkeyhint="go" lang="ko">
+      </div>
+    </div>
+    <p class="rinfo warn hide" id="pairWarn"></p>
+    <details class="how" id="howBox">
+      <summary>계산 방식 <span class="cur" id="howCur">펜 획수 · 00은 100%</span></summary>
+      <div class="row first">
+        <div class="lab"><span>획수 세는 법</span><span class="hint">다른 사이트와 점수가 다르면 바꿔 보세요</span></div>
+        <div class="seg" data-seg="m">
+          <button type="button" data-v="pen" class="on">펜 획수<span class="s">ㄱ 1 · ㅁ 3 (기본)</span></button>
+          <button type="button" data-v="line">선 개수<span class="s">ㄱ 2 · ㅁ 4</span></button>
+        </div>
+      </div>
+      <label class="chk"><input type="checkbox" id="chkZ" checked><span>마지막이 <b>00</b>이면 100%로 읽기<span class="d">두 자리라 보통 최고점은 99%예요. 00을 100%로 치는 사람도 있어 고를 수 있게 했어요.</span></span></label>
+    </details>
+    <div class="actions">
+      <button class="btn pri big1" id="btnGo" type="button">💞 궁합 보기</button>
+    </div>
+  </section>
+
+  <section class="card hide" id="resCard" aria-live="polite">
+    <h2><span>이름궁합 결과</span><span class="opt" id="resInfo"></span></h2>
+    <div class="score">
+      <div class="who"><b id="rA"></b><i aria-hidden="true">♥</i><b id="rB"></b></div>
+      <div class="big"><b id="rScore">0</b><span>%</span></div>
+      <div class="grade"><span class="gi" id="rGi"></span><b id="rGrade"></b></div>
+      <p class="gsub" id="rSub"></p>
+    </div>
+    <div class="orders" role="group" aria-label="순서별 점수">
+      <button type="button" class="ord on" id="ord0"><span class="ol" id="ord0L"></span><b id="ord0S"></b></button>
+      <button type="button" class="ord" id="ord1"><span class="ol" id="ord1L"></span><b id="ord1S"></b></button>
+    </div>
+    <p class="fine" id="ordNote">누구 이름을 먼저 쓰느냐에 따라 점수가 달라요. 눌러서 두 계산을 비교해 보세요.</p>
+    <div class="triwrap"><div class="tri" id="tri" aria-label="계산 과정"></div></div>
+    <details class="parts" id="partsBox">
+      <summary>글자별 획수 풀이 보기</summary>
+      <ul class="plist" id="plist"></ul>
+    </details>
+    <div class="actions">
+      <button class="btn pri" id="btnShare" type="button">🔗 결과 링크 보내기</button>
+      <button class="btn" id="btnPng" type="button">💾 결과 그림 저장</button>
+      <button class="btn" id="btnCopy" type="button">📋 결과 글 복사</button>
+    </div>
+  </section>
+
+  <section class="card hide" id="labCard">
+    <h2><span><span class="n">2</span>점수 올리기 실험실</span><span class="opt">100% 나오는 법</span></h2>
+    <p class="gp" style="margin-top:0">이름궁합은 <b>성을 넣는지, 누구를 먼저 쓰는지, 획수를 어떻게 세는지</b>에 따라 점수가 바뀌어요. 같은 두 사람으로 나올 수 있는 점수를 한눈에 모았어요.</p>
+    <div class="grid2 nick">
+      <div><label class="lab" for="nkA"><span id="nkAL">첫째 사람 애칭</span><span class="hint">선택</span></label>
+        <input type="text" id="nkA" maxlength="8" autocomplete="off" placeholder="예: 길동이" lang="ko"></div>
+      <div><label class="lab" for="nkB"><span id="nkBL">둘째 사람 애칭</span><span class="hint">선택</span></label>
+        <input type="text" id="nkB" maxlength="8" autocomplete="off" placeholder="예: 춘향이" lang="ko"></div>
+    </div>
+    <div class="tbw"><table class="kt lab-t" id="labT"></table></div>
+    <p class="rinfo ok" id="labBest"></p>
+    <p class="fine">칸을 누르면 그 조합으로 계산 과정을 다시 보여 줘요.</p>
+  </section>
+  </div>
+
+  <!-- ══ 여러 명 ══ -->
+  <div id="tGroup" role="tabpanel" aria-labelledby="tb-group" class="hide">
+  <section class="card" id="groupCard">
+    <h2><span><span class="n">1</span>이름 여러 개</span><span class="opt" id="gCount">0명</span></h2>
+    <div class="lab"><span>한 줄에 한 명씩</span><span class="hint">쉼표나 띄어쓰기로 이어 적어도 돼요 · 최대 30명</span></div>
+    <textarea id="gIn" rows="6" autocomplete="off" spellcheck="false" lang="ko" placeholder="홍길동&#10;김영희&#10;이철수&#10;박지민"></textarea>
+    <div class="row">
+      <div class="lab"><span>무엇을 볼까요?</span></div>
+      <div class="seg" data-seg="gm">
+        <button type="button" data-v="me" class="on">나와 친구들<span class="s">첫 줄이 나, 순위로</span></button>
+        <button type="button" data-v="all">모두 서로<span class="s">모임 궁합표 · 베스트 짝</span></button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="lab"><span>순위 기준</span><span class="hint">둘의 순서에 따라 점수가 달라서</span></div>
+      <div class="seg sm" data-seg="gk">
+        <button type="button" data-v="avg" class="on">두 순서 평균</button>
+        <button type="button" data-v="max">높은 쪽</button>
+        <button type="button" data-v="first">앞사람 먼저</button>
+      </div>
+    </div>
+    <p class="rinfo warn hide" id="gWarn"></p>
+    <div class="actions">
+      <button class="btn pri" id="btnGroup" type="button">👥 궁합 순위 보기</button>
+      <button class="btn" id="btnGSample" type="button">예시 이름 넣기</button>
+    </div>
+  </section>
+  <section class="card hide" id="gRes">
+    <h2><span id="gTitle">궁합 순위</span><span class="opt" id="gInfo"></span></h2>
+    <div class="podium" id="gTop"></div>
+    <ol class="rank" id="gRank"></ol>
+    <div id="gMatW" class="hide">
+      <h3 class="wh">모임 궁합표 <span>왼쪽 이름을 먼저 쓴 점수 · 칸을 누르면 계산 과정</span></h3>
+      <div class="tbw"><table class="mat" id="gMat"></table></div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="btnGPng" type="button">💾 순위 그림 저장</button>
+      <button class="btn" id="btnGCopy" type="button">📋 표 복사(엑셀에 붙여넣기)</button>
+    </div>
+    <p class="fine">이름을 누르면 「둘이서」로 넘어가 계산 과정을 보여 줘요.</p>
+  </section>
+  </div>
+
+  <!-- ══ 100% 이름 찾기 ══ -->
+  <div id="tFind" role="tabpanel" aria-labelledby="tb-find" class="hide">
+  <section class="card" id="findCard">
+    <h2><span><span class="n">1</span>나와 잘 맞는 이름 찾기</span><span class="opt">흔한 이름 213개</span></h2>
+    <label class="lab" for="fIn"><span>내 이름</span><span class="hint">성까지 넣어 주세요</span></label>
+    <input type="text" id="fIn" maxlength="10" autocomplete="off" spellcheck="false" placeholder="예: 홍길동" enterkeyhint="search" lang="ko">
+    <div class="row">
+      <div class="lab"><span>찾을 이름</span></div>
+      <div class="seg sm" data-seg="fg">
+        <button type="button" data-v="f" class="on">여자 이름</button>
+        <button type="button" data-v="m">남자 이름</button>
+        <button type="button" data-v="a">모두</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="lab"><span>상대 성</span></div>
+      <div class="seg sm" data-seg="fs">
+        <button type="button" data-v="any" class="on">흔한 성 20개</button>
+        <button type="button" data-v="one">성 하나 고르기</button>
+        <button type="button" data-v="none">성 빼고 이름만</button>
+      </div>
+      <select id="fSur" class="hide" aria-label="상대 성 고르기"></select>
+    </div>
+    <div class="row">
+      <div class="lab"><span>순서</span></div>
+      <div class="seg sm" data-seg="fo">
+        <button type="button" data-v="me" class="on">내 이름 먼저</button>
+        <button type="button" data-v="them">상대 먼저</button>
+        <button type="button" data-v="both">어느 쪽이든<span class="s">두 점수 중 낮은 쪽</span></button>
+      </div>
+    </div>
+    <p class="rinfo warn hide" id="fWarn"></p>
+    <div class="actions"><button class="btn pri" id="btnFind" type="button">💯 잘 맞는 이름 찾기</button></div>
+  </section>
+  <section class="card hide" id="fRes">
+    <h2><span id="fTitle">찾은 이름</span><span class="opt" id="fInfo"></span></h2>
+    <p class="rinfo ok" id="fSum"></p>
+    <div class="fgrp" id="fList"></div>
+    <p class="fine">이름을 누르면 「둘이서」로 넘어가 계산 과정을 보여 줘요. 후보는 흔히 보이는 이름을 모은 것이라 모든 이름이 들어 있지는 않아요.</p>
+  </section>
+  </div>
+
+</main>
+
+<aside id="side">
+  <section class="card" id="stkCard">
+    <h2><span>지금 쓰는 획수 표</span><span class="opt" id="stkCur">펜 획수</span></h2>
+    <div class="stk-c" id="stkC"></div>
+    <div class="stk-v" id="stkV"></div>
+    <p class="fine">받침도 같은 표로 셉니다. 겹받침(ㄺ·ㅄ 등)은 두 자음을 더해요.</p>
+  </section>
+  <section class="card" id="tipCard">
+    <h2><span>이렇게 해 보세요</span></h2>
+    <ul class="tips">
+      <li><b>순서 바꿔 보기</b> — 점수는 누구 이름을 먼저 쓰느냐에 따라 달라요. 결과에서 두 점수를 눌러 비교해 보세요.</li>
+      <li><b>모임·교실 놀이</b> — 「여러 명」에 이름을 줄줄이 넣으면 순위와 궁합표가 한 번에 나와요.</li>
+      <li><b>100% 찾기</b> — 내 이름과 100%(또는 99%) 나오는 이름을 흔한 이름 가운데서 찾아 줘요.</li>
+    </ul>
+  </section>
+</aside>
+</div>
+
+<section class="card hide" id="doneCard">
+  <h2><span>저장했습니다</span><button class="mini" id="doneHide" type="button">닫기</button></h2>
+  <p class="dmsg" id="doneMsg"></p>
+  <ol class="dsteps" id="doneSteps"></ol>
+  <p class="dwarn hide" id="doneInapp">파일이 안 보이면 앱 안 브라우저라서 그래요. <button type="button" id="doneGo">크롬에서 열기</button></p>
+</section>
+
+<section class="card" id="guide">
+  <h2><span>이름궁합 하는 법</span></h2>
+  <ol class="steps">
+    <li><b>두 이름을 한 글자씩 번갈아 적어요.</b><span class="d">먼저 쓰는 사람의 첫 글자, 다음 사람의 첫 글자, 다시 먼저 쓰는 사람의 둘째 글자… 길이가 다르면 남는 글자는 뒤에 붙여요.</span></li>
+    <li><b>글자마다 획수를 세어 숫자로 바꿔요.</b><span class="d">자음·모음·받침의 획수를 더해요. 「민」은 ㅁ 3 + ㅣ 1 + ㄴ 1 = 5예요.</span></li>
+    <li><b>이웃한 두 숫자를 더해 일의 자리만 아래에 적어요.</b><span class="d">9 + 5 = 14라면 4만 적어요. 한 줄 내려갈 때마다 숫자가 하나씩 줄어요.</span></li>
+    <li><b>숫자가 두 개 남으면 그게 궁합 점수예요.</b><span class="d">3과 8이 남으면 38%예요. 누구를 먼저 썼는지에 따라 점수가 달라서 두 순서를 다 보는 사람이 많아요.</span></li>
+  </ol>
+  <h3 class="wh">계산 예시</h3>
+  <p class="gp">예를 들어 <b>홍길동과</b> <b>성춘향을</b> 볼게요. 글자를 번갈아 놓으면 <b>홍 · 성 · 길 · 춘 · 동 · 향</b>, 글자마다 획수를 세어 숫자로 바꿔요(<b>6 · 5 · 5 · 7 · 5 · 7</b>).</p><ul class="exparts"><li><b>홍</b> · ㅎ 3 + ㅗ 2 + ㅇ 1 = <b>6</b></li><li><b>길</b> · ㄱ 1 + ㅣ 1 + ㄹ 3 = <b>5</b></li><li><b>동</b> · ㄷ 2 + ㅗ 2 + ㅇ 1 = <b>5</b></li><li><b>성</b> · ㅅ 2 + ㅓ 2 + ㅇ 1 = <b>5</b></li><li><b>춘</b> · ㅊ 4 + ㅜ 2 + ㄴ 1 = <b>7</b></li><li><b>향</b> · ㅎ 3 + ㅑ 3 + ㅇ 1 = <b>7</b></li></ul><div class="tri st" aria-hidden="true"><div class="tr ch"><span class="p0">홍</span><span class="p1">성</span><span class="p0">길</span><span class="p1">춘</span><span class="p0">동</span><span class="p1">향</span></div><div class="tr"><i>6</i><i>5</i><i>5</i><i>7</i><i>5</i><i>7</i></div><div class="tr"><i>1</i><i>0</i><i>2</i><i>2</i><i>2</i></div><div class="tr"><i>1</i><i>2</i><i>4</i><i>4</i></div><div class="tr"><i>3</i><i>6</i><i>8</i></div><div class="tr last"><i>9</i><i>4</i></div></div><p class="gp">이웃한 두 숫자를 더해 일의 자리만 아래에 적고(예: 6 + 5 = 11 → 1), 숫자가 두 개 남을 때까지 되풀이하면 <b>94%</b>가 나와요. 순서를 바꿔 <b>성춘향을</b> 먼저 쓰면 <b>87%</b>예요.</p>
+</section>
+
+<section class="card" id="table">
+  <h2><span>이름궁합 획수 표</span><span class="opt">두 가지 세는 법</span></h2>
+  <p class="gp" style="margin-top:0">이름궁합에는 획수를 세는 법이 크게 두 가지 있어요. <b>펜 획수</b>는 손으로 쓸 때처럼 꺾여도 한 획으로 세고(ㄱ 1획), <b>선 개수</b>는 꺾인 곳에서 나눠 셉니다(ㄱ 2획). 같은 두 이름이라도 사이트마다 점수가 다른 가장 큰 이유가 이 차이예요. 모음은 두 방식이 같아요.</p>
+  <div class="tbw"><table class="kt stk"><thead><tr><th>자음</th><th>ㄱ</th><th>ㄴ</th><th>ㄷ</th><th>ㄹ</th><th>ㅁ</th><th>ㅂ</th><th>ㅅ</th><th>ㅇ</th><th>ㅈ</th><th>ㅊ</th><th>ㅋ</th><th>ㅌ</th><th>ㅍ</th><th>ㅎ</th></tr></thead><tbody><tr><td class="k">펜 획수 <small>(기본)</small></td><td>1</td><td>1</td><td>2</td><td>3</td><td>3</td><td>4</td><td>2</td><td>1</td><td>3</td><td>4</td><td>2</td><td>3</td><td>4</td><td>3</td></tr><tr><td class="k">선 개수</td><td>2</td><td>2</td><td>3</td><td>5</td><td>4</td><td>4</td><td>2</td><td>1</td><td>3</td><td>4</td><td>3</td><td>4</td><td>4</td><td>3</td></tr></tbody></table></div>
+  <div class="tbw"><table class="kt stk"><thead><tr><th>된소리</th><th>ㄲ</th><th>ㄸ</th><th>ㅃ</th><th>ㅆ</th><th>ㅉ</th></tr></thead><tbody><tr><td class="k">펜 획수</td><td>2</td><td>4</td><td>8</td><td>4</td><td>6</td></tr><tr><td class="k">선 개수</td><td>4</td><td>6</td><td>8</td><td>4</td><td>6</td></tr></tbody></table></div>
+  <div class="tbw"><table class="kt stk"><thead><tr><th>모음</th><th>ㅏ</th><th>ㅑ</th><th>ㅓ</th><th>ㅕ</th><th>ㅗ</th><th>ㅛ</th><th>ㅜ</th><th>ㅠ</th><th>ㅡ</th><th>ㅣ</th></tr></thead><tbody><tr><td class="k">획수</td><td>2</td><td>3</td><td>2</td><td>3</td><td>2</td><td>3</td><td>2</td><td>3</td><td>1</td><td>1</td></tr></tbody></table></div><div class="tbw"><table class="kt stk"><thead><tr><th>모음</th><th>ㅐ</th><th>ㅒ</th><th>ㅔ</th><th>ㅖ</th><th>ㅘ</th><th>ㅙ</th><th>ㅚ</th><th>ㅝ</th><th>ㅞ</th><th>ㅟ</th><th>ㅢ</th></tr></thead><tbody><tr><td class="k">획수</td><td>3</td><td>4</td><td>3</td><td>4</td><td>4</td><td>5</td><td>3</td><td>4</td><td>5</td><td>3</td><td>2</td></tr></tbody></table></div>
+  <p class="tnote">겹받침은 두 자음을 더해요(펜 획수로 ㄺ = ㄹ 3 + ㄱ 1 = 4). 이 도구는 위쪽 「계산 방식」에서 두 표를 바꿔 가며 계산할 수 있어요.</p>
+</section>
+
+<section class="card" id="faq">
+  <h2><span>자주 묻는 질문</span></h2>
+  <details>
+    <summary>이름궁합은 어떻게 계산하나요?</summary>
+    <p>두 이름을 한 글자씩 번갈아 놓고, 글자마다 자음·모음·받침의 <b>획수</b>를 더해 숫자로 바꿔요. 그다음 이웃한 두 숫자를 더해 <b>일의 자리만</b> 아래 줄에 적는 일을 숫자가 두 개 남을 때까지 되풀이하면, 마지막 두 자리가 궁합 점수(%)예요. 이 도구는 그 과정을 숫자 삼각형으로 한 줄씩 보여 줘요.</p>
+  </details>
+  <details>
+    <summary>사이트마다 점수가 다른 이유는 뭔가요?</summary>
+    <p>세 가지 때문이에요. ① <b>획수 세는 법</b> — ㄱ을 1획으로 세는 곳(펜 획수)과 2획으로 세는 곳(선 개수)이 있어요. ② <b>성을 넣는지</b> — 성까지 넣는 게 보통이지만 이름만 넣는 곳도 있어요. ③ <b>누구를 먼저 쓰는지</b>. 이 도구는 세 가지를 모두 바꿔 볼 수 있고, 「점수 올리기 실험실」에서 나올 수 있는 점수를 한 번에 보여 줘요.</p>
+  </details>
+  <details>
+    <summary>이름궁합 100% 나오는 법이 있나요?</summary>
+    <p>마지막 두 숫자를 붙여 읽기 때문에 보통 최고점은 <b>99%</b>예요. 마지막이 <b>00</b>이면 100%로 치는 사람도 있어서 이 도구는 기본으로 그렇게 읽어요(계산 방식에서 끌 수 있어요). 100%에 가깝게 나오는 조합은 「점수 올리기 실험실」에서 성 빼기·애칭·순서를 바꿔 찾아볼 수 있고, 「100% 이름 찾기」에서는 흔한 이름 213개 가운데 나와 100%·99%가 나오는 이름을 골라 줘요.</p>
+  </details>
+  <details>
+    <summary>누구 이름을 먼저 써야 하나요?</summary>
+    <p>정해진 규칙은 없어요. 남자 이름을 먼저 쓰는 사람도 있고, 고백하는 사람이나 내 이름을 먼저 쓰는 사람도 있어요. 순서에 따라 점수가 달라지니 결과 화면에서 <b>두 점수를 다</b> 확인해 보세요.</p>
+  </details>
+  <details>
+    <summary>친구 여러 명과 한꺼번에 볼 수 있나요?</summary>
+    <p>네. 「여러 명」에 이름을 한 줄에 하나씩(최대 30명) 넣으면, <b>나와 친구들</b>은 첫 줄의 나와 나머지 사람의 궁합 순위를, <b>모두 서로</b>는 모든 짝의 순위와 베스트 짝, 12명까지는 한눈에 보는 궁합표를 만들어 줘요. 순위 그림으로 저장하거나 표로 복사해 단톡방에 올릴 수 있어요.</p>
+  </details>
+  <details>
+    <summary>외자 이름이나 네 글자 이름도 되나요?</summary>
+    <p>네. 글자 수가 달라도 번갈아 놓다가 남는 글자를 뒤에 붙여 계산해요. 남궁·황보·제갈·선우처럼 두 글자 성도 그대로 넣으면 돼요. 영어 이름은 소리 나는 대로 한글로 적어 주세요(예: 제임스).</p>
+  </details>
+  <details>
+    <summary>넣은 이름은 어디에 저장되나요?</summary>
+    <p>어디로도 보내지 않아요. 계산은 모두 <b>이 기기의 브라우저 안에서</b> 이루어지고, 이름은 저장하지 않아요(획수 세는 법 같은 설정만 이 브라우저에 기억해요). <b>결과 링크 보내기</b>를 누를 때만 두 이름이 링크 끝(# 뒤)에 담겨요.</p>
+  </details>
+</section>
+
+<!-- ══ 주의 문구 ══ -->
+<div class="nbx">
+  <div class="nbx-h"><span class="ic">!</span><span>알아 두세요</span></div>
+  <ul>
+    <li>이름궁합은 이름 글자의 획수를 더해 보는 <b>놀이</b>예요. 과학적·명리학적 근거가 없고, 실제 관계나 성격과는 상관이 없어요.</li>
+    <li>점수로 사람을 판단하거나 놀리는 데 쓰지 마세요. 낮게 나와도 순서나 애칭을 바꾸면 얼마든지 달라지는 숫자예요.</li>
+    <li>결과 링크에는 넣은 두 이름이 그대로 담겨요. 링크를 받은 사람은 누구나 볼 수 있으니 필요하면 별명으로 적어 주세요.</li>
+  </ul>
+  <p class="nbx-f">이 도구는 <b>있는 그대로 제공되며</b>, 결과를 써서 생긴 일에 대해 <b>제작자와 운영자는 법적 책임을 지지 않습니다.</b></p>
+</div>
+
+<footer>
+  <b>이름궁합 테스트</b> · 이름 궁합 계산기 · 이름궁합 보는법 · 디지털 이름궁합 · 이름 획수 궁합 · 커플 이름궁합 · 친구 이름궁합<br>
+  함께 보면 좋은 도구: <a href="https://hwj-hub.github.io/balance_game/" target="_blank" rel="noopener">밸런스 게임 · 커플 궁합</a> · <a href="https://hwj-hub.github.io/nickname_maker/" target="_blank" rel="noopener">닉네임 생성기</a> · <a href="https://hwj-hub.github.io/name_romanizer/" target="_blank" rel="noopener">영문 이름 변환기</a> · <a href="https://hwj-hub.github.io/greeting_card/" target="_blank" rel="noopener">연하장·카드 만들기</a><br>
+  획수 표와 후보 이름은 이 도구가 직접 정리했습니다(2026년 11월) · 결과는 재미로만 보세요<br>
+  넣은 이름은 어디에도 전송되지 않으며, 페이지를 연 뒤에는 인터넷 없이도 동작합니다 · 외부 라이브러리 없음
+</footer>
+</div>
+
+<!-- 앱 안(네이버·카카오톡 등) 안내 창 -->
+<div class="iamodal" id="iaModal" role="dialog" aria-modal="true" aria-labelledby="iaTitle">
+  <div class="iasheet">
+    <div class="iaic">📱</div>
+    <h2 id="iaTitle">앱 안에서는 그림이 저장되지 않을 수 있습니다</h2>
+    <p class="iap" id="iaDesc"></p>
+    <ol class="iasteps" id="iaSteps"></ol>
+    <button class="iabtn" id="iaGo2" type="button">크롬에서 열기</button>
+    <p class="iafine"><button type="button" id="iaStay">그냥 볼게요</button></p>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+/* ════════════════════════════════════════════════════════════
+   이름궁합 테스트 — 라이브러리 없이 순수 JS
+   두 이름을 한 글자씩 번갈아 놓고 글자마다 획수(자음+모음+받침)를 세어,
+   이웃한 두 수의 합의 일의 자리를 적어 내려가 마지막 두 자리를 점수로 본다(순서를 바꾼 점수도 함께).
+   획수 표 두 벌(펜 획수 · 선 개수) · 여러 명 순위와 궁합표 · 흔한 이름 213개 × 성 20개에서 100% 이름 찾기
+   넣은 이름은 이 브라우저 밖으로 보내지 않는다(공유 링크를 누를 때만 # 뒤에 담긴다)
+   ════════════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const esc = s => String(s).replace(/[&<>"']/g, c => ESC[c]);
+let toastT = 0;
+function toast(msg, ms) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), ms || 2600);
+}
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+/* 배경 탭에서도 느려지지 않는 양보(타이머는 배경 탭에서 1초로 늘어난다) */
+const _ych = new MessageChannel(); const _yq = [];
+_ych.port1.onmessage = () => { const f = _yq.shift(); if (f) f(); };
+const yieldUI = () => new Promise(r => { _yq.push(r); _ych.port2.postMessage(0); });
+const FACES = {
+  sans: '"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR","Nanum Gothic","NanumGothic",sans-serif'
+};
+const canvasBlob = (cv, type, q) => new Promise((res, rej) => cv.toBlob(b => b ? res(b) : rej(new Error('toBlob')), type || 'image/png', q));
+const coarse = () => window.matchMedia('(pointer:coarse)').matches;
+
+/* ── 기억 — 이 브라우저에만(localStorage, name_compatibility. 로 시작). 설정만 — 넣은 이름은 기억하지 않는다 ── */
+const KP = 'name_compatibility.';
+const lsGet = k => { try { return localStorage.getItem(KP + k); } catch (e) { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(KP + k, v); } catch (e) { /* 사생활 보호 창 등 — 기억만 못 한다 */ } };
+
+/* ── 복사 · 보내기 · 저장 ── */
+function copyText(s, msg) {
+  const done = () => toast(msg, 3200);
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(s).then(done, () => fallbackCopy(s, done)); return; }
+  } catch (e) { /* 아래로 */ }
+  fallbackCopy(s, done);
+}
+/* 휴대폰은 공유 창, 컴퓨터·앱 안은 복사 */
+async function sendLink(text, url) {
+  if (navigator.share && coarse() && !IA.on) {
+    try { await navigator.share({ text, url }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  copyText(text + '\n' + url, '링크를 복사했어요. 단톡방이나 메시지 창에 붙여 넣으세요.');
+}
+function download(blob, name) {
+  if (IA.on) { downloadInApp(blob, name); return; }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name; a.rel = 'noopener';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+const safeName = s => String(s).replace(/[\\/:*?"<>|\s♥♡]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 30) || '이름궁합';
+
+/* 자동 생성 — build.py 가 만든다. 손으로 고치지 말 것 */
+/* 자음 획수 두 벌(pen 펜 획수 · line 선 개수) · 모음 · 겹받침 나누기 */
+const CONS = {"pen":{"ㄱ":1,"ㄲ":2,"ㄴ":1,"ㄷ":2,"ㄸ":4,"ㄹ":3,"ㅁ":3,"ㅂ":4,"ㅃ":8,"ㅅ":2,"ㅆ":4,"ㅇ":1,"ㅈ":3,"ㅉ":6,"ㅊ":4,"ㅋ":2,"ㅌ":3,"ㅍ":4,"ㅎ":3},"line":{"ㄱ":2,"ㄲ":4,"ㄴ":2,"ㄷ":3,"ㄸ":6,"ㄹ":5,"ㅁ":4,"ㅂ":4,"ㅃ":8,"ㅅ":2,"ㅆ":4,"ㅇ":1,"ㅈ":3,"ㅉ":6,"ㅊ":4,"ㅋ":3,"ㅌ":4,"ㅍ":4,"ㅎ":3}};
+const VOW = {"ㅏ":2,"ㅐ":3,"ㅑ":3,"ㅒ":4,"ㅓ":2,"ㅔ":3,"ㅕ":3,"ㅖ":4,"ㅗ":2,"ㅘ":4,"ㅙ":5,"ㅚ":3,"ㅛ":3,"ㅜ":2,"ㅝ":4,"ㅞ":5,"ㅟ":3,"ㅠ":3,"ㅡ":1,"ㅢ":2,"ㅣ":1};
+const SPLIT = {"ㄳ":"ㄱㅅ","ㄵ":"ㄴㅈ","ㄶ":"ㄴㅎ","ㄺ":"ㄹㄱ","ㄻ":"ㄹㅁ","ㄼ":"ㄹㅂ","ㄽ":"ㄹㅅ","ㄾ":"ㄹㅌ","ㄿ":"ㄹㅍ","ㅀ":"ㄹㅎ","ㅄ":"ㅂㅅ"};
+/* 「100% 이름 찾기」 후보 — 흔히 보이는 이름(순위 아님) · 흔한 성 20개 */
+const NAMES = {"m":["민준","서준","도윤","예준","시우","하준","주원","지호","지후","준우","준서","도현","건우","현우","우진","선우","서진","연우","유준","정우","승우","승현","시윤","준혁","은우","지환","승민","지우","유찬","윤우","민성","준영","시후","진우","지훈","은찬","수호","이준","이안","로운","은호","하람","도하","시온","태오","하율","지안","서우","재윤","민재","현준","동현","재원","민우","태윤","한결","우주","하진","준호","성민","승준","현서","재민","지성","민규","윤호","태민","성현","정민","시현","규민","동건","태양","율","찬","결","건","민수","영수","영호","영철","정훈","성호","상훈","동욱","성진","재훈","현석","상민","진호","성훈","민호","동훈","재현","승훈","태현","현수","정호","영민","철수","광수","상철","기현","대현","종민","병철","경수","용준","정수","형준","준기","우성","동원","정재","상우","지섭","길동"],"f":["서연","서윤","지우","서현","민서","하은","하윤","윤서","지유","지민","채원","수아","지아","지윤","다은","은서","예은","수빈","소율","예린","지원","하린","시은","유나","아린","이서","하율","서아","아윤","지안","시아","채은","연우","유진","예서","소윤","나은","다인","가은","서영","수민","예나","채윤","하연","아인","유주","은채","서하","로아","리아","나연","다연","서진","혜원","윤아","소은","다윤","지수","예지","하영","별","솔","봄","지영","수진","지혜","현주","미영","영희","은정","혜진","수정","은영","미경","지현","민지","은지","선영","정희","미숙","경희","영숙","현정","지은","유리","소영","수연","보람","슬기","아름","다혜","한나","미진","은주","혜리","정은","소희","춘향","수지","진주","미나"],"s":["김","이","박","최","정","강","조","윤","장","임","한","오","서","신","권","황","안","송","전","홍"]};
+
+/* ════════════════════════════════════════════════════════════
+   계산 — 글자 → 자모 → 획수, 두 이름 번갈아 놓기, 숫자 삼각형, 점수
+   build.py 의 파이썬 계산과 같아야 한다(시험이 무작위 이름 쌍으로 대조한다)
+   ════════════════════════════════════════════════════════════ */
+const CHO_L = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+const JUNG_L = 'ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ';
+const JONG_L = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+const METHODS = { pen: '펜 획수', line: '선 개수' };
+/* 두 글자 성 — 네 글자 이름에서 앞 두 글자가 이 목록이면 성으로 본다 */
+const SUR2 = ['남궁', '황보', '제갈', '선우', '독고', '사공', '서문', '동방', '어금', '망절', '등정'];
+
+const isHan = ch => { const c = ch.charCodeAt(0); return c >= 0xAC00 && c <= 0xD7A3; };
+function jamoOf(ch) {
+  const c = ch.charCodeAt(0) - 0xAC00;
+  return [CHO_L[Math.floor(c / 588)], JUNG_L[Math.floor((c % 588) / 28)], JONG_L[c % 28]];
+}
+/* 글자 하나의 획수와 풀이 — [{j:'ㅎ', n:3}, …] */
+function strokeParts(ch, m) {
+  const [a, b, c] = jamoOf(ch), t = CONS[m];
+  const ps = [{ j: a, n: t[a] }, { j: b, n: VOW[b] }];
+  if (c) ps.push({ j: c, n: Array.from(SPLIT[c] || c).reduce((s, x) => s + t[x], 0) });
+  return ps;
+}
+const strokesOf = (ch, m) => strokeParts(ch, m).reduce((s, p) => s + p.n, 0);
+
+/* 넣은 글을 이름으로 — 공백·가운뎃점 빼고 한글 글자만. 낱자(ㅎ)·영어가 섞였으면 bad 로 알린다 */
+function cleanName(s) {
+  const raw = String(s || '').replace(/[\s·.,_\-♥♡❤]/g, '');
+  const ok = Array.from(raw).filter(isHan).join('');
+  return { name: ok.slice(0, 8), bad: ok.length !== raw.length, long: ok.length > 8 };
+}
+/* 성과 이름 나누기 — 두 글자 이름은 성이 없다고 본다 */
+function splitSur(n) {
+  if (n.length >= 4 && SUR2.includes(n.slice(0, 2))) return [n.slice(0, 2), n.slice(2)];
+  if (n.length >= 3) return [n.slice(0, 1), n.slice(1)];
+  return ['', n];
+}
+
+function interleave(a, b) {
+  const A = Array.from(a), B = Array.from(b), out = [];
+  for (let i = 0; i < Math.max(A.length, B.length); i++) {
+    if (i < A.length) out.push({ c: A[i], o: 0 });
+    if (i < B.length) out.push({ c: B[i], o: 1 });
+  }
+  return out;
+}
+/* 점수 — opt = { m:'pen'|'line', z: 00을 100%로 } · 결과 { seq, rows, score, raw:'38' } */
+function compat(a, b, opt) {
+  const m = (opt && opt.m) || 'pen', z = !opt || opt.z !== false;
+  const seq = interleave(a, b);
+  const rows = [seq.map(s => strokesOf(s.c, m))];
+  /* 마지막 줄은 한 자리 숫자 두 개여야 한다 — 한 글자 이름끼리(첫 줄이 곧 마지막 줄)는 획수 10 이상을 끝자리로 한 줄 더 */
+  for (let r = rows[0]; r.length > 2 || r.some(v => v > 9); r = rows[rows.length - 1]) {
+    const nx = [];
+    if (r.length > 2) for (let i = 0; i < r.length - 1; i++) nx.push((r[i] + r[i + 1]) % 10);
+    else r.forEach(v => nx.push(v % 10));
+    rows.push(nx);
+  }
+  const last = rows[rows.length - 1];
+  const raw = last.join('');
+  let score = last.length === 2 ? last[0] * 10 + last[1] : last[0];
+  const hundred = score === 0 && z && last.length === 2;
+  if (hundred) score = 100;
+  return { seq, rows, score, raw, hundred };
+}
+/* 빠른 점수(찾기·궁합표용) — 삼각형을 남기지 않는다 */
+function quickScore(a, b, m, z) {
+  let r = interleave(a, b).map(s => strokesOf(s.c, m));
+  while (r.length > 2) { const nx = new Array(r.length - 1); for (let i = 0; i < nx.length; i++) nx[i] = (r[i] + r[i + 1]) % 10; r = nx; }
+  if (r.length === 2) r = [r[0] % 10, r[1] % 10];
+  const s = r.length === 2 ? r[0] * 10 + r[1] : r[0];
+  return s === 0 && z && r.length === 2 ? 100 : s;
+}
+
+/* 점수 풀이 — 재미로 붙이는 말. 관계(연인·친구·가족)를 가리지 않는 말로 */
+const GRADES = [
+  [100, '💯', '완벽한 100%', '두 자리가 나란히 0이라 100%로 읽었어요. 이름부터 짝이 맞는 사이예요.'],
+  [90, '💘', '천생연분', '이름 획수가 이렇게 잘 맞기도 쉽지 않아요. 말 안 해도 통하는 사이일지도요.'],
+  [80, '💞', '찰떡궁합', '함께 있으면 편하고 재미있는 사이. 서로의 장점을 잘 알아보는 점수예요.'],
+  [70, '😊', '잘 맞는 사이', '큰 다툼 없이 오래가는 조합이에요. 작은 관심 하나가 점수를 더 올려요.'],
+  [60, '🌷', '알콩달콩', '닮은 점과 다른 점이 반반. 다른 점이 오히려 대화거리가 돼요.'],
+  [50, '🎈', '반반의 설렘', '어느 쪽으로든 갈 수 있는 점수예요. 순서를 바꾼 점수도 함께 보세요.'],
+  [40, '🎲', '밀당의 고수', '쉽게 읽히지 않는 사이라 오히려 궁금해지는 조합이에요.'],
+  [30, '⚡', '티격태격', '자주 부딪쳐도 금방 푸는 사이. 다툼도 정이 되는 점수예요.'],
+  [20, '🌀', '반전 매력', '숫자는 낮아도 기억에는 오래 남는 조합이에요. 애칭으로 다시 해 보세요.'],
+  [0, '🍀', '이제부터 시작', '이름 획수가 아직 서먹한 사이예요. 점수는 재미일 뿐, 둘이 만드는 이야기가 진짜예요.']
+];
+const gradeOf = s => GRADES.find(g => s >= g[0]);
+
+/* ════════════════════════════════════════════════════════════
+   결과 그림 — 둘이서(1080×1350, 숫자 삼각형까지) · 여러 명 순위(1080×가변)
+   ════════════════════════════════════════════════════════════ */
+function fitFont(ctx, s, maxW, px, w, minPx) {
+  let z = px;
+  for (; z > (minPx || 12); z -= 2) { ctx.font = (w || 800) + ' ' + z + 'px ' + FACES.sans; if (ctx.measureText(s).width <= maxW) break; }
+  return z;
+}
+function rrect(ctx, x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+const CC = { a: '#db2777', b: '#2563eb', v: '#7c3aed', fg: '#151a26', mu: '#556072', line: '#e7e2ee', abg: '#fdf2f8', bbg: '#eff6ff' };
+function cardBg(ctx, W, H) {
+  const g = ctx.createLinearGradient(0, 0, W, H);
+  g.addColorStop(0, '#f472b6'); g.addColorStop(1, '#8b5cf6');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#ffffff'; rrect(ctx, 54, 54, W - 108, H - 108, 46); ctx.fill();
+}
+/* 숫자 삼각형 그리기 — 가운데 정렬, 칸 크기는 너비에 맞춘다 */
+function drawTri(ctx, r, cx, top, maxW, maxH) {
+  const n = r.rows[0].length, nr = r.rows.length + 1;
+  const gap = 0.2;
+  let c = Math.min(76, maxW / (n + (n - 1) * gap), maxH / (nr + (nr - 1) * gap + 0.3));
+  const step = c * (1 + gap);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const rowY = i => top + c / 2 + i * step + (i === nr - 1 ? c * 0.25 : 0);
+  /* 글자 줄 */
+  r.seq.forEach((s, k) => {
+    const x = cx + (k - (n - 1) / 2) * step, y = rowY(0);
+    ctx.fillStyle = s.o ? CC.bbg : CC.abg; rrect(ctx, x - c / 2, y - c / 2, c, c, c * 0.24); ctx.fill();
+    ctx.lineWidth = Math.max(2, c * 0.05); ctx.strokeStyle = s.o ? CC.b : CC.a; ctx.stroke();
+    ctx.fillStyle = s.o ? CC.b : CC.a; ctx.font = '900 ' + Math.round(c * 0.5) + 'px ' + FACES.sans; ctx.fillText(s.c, x, y + c * 0.03);
+  });
+  r.rows.forEach((row, i) => {
+    const last = i === r.rows.length - 1, m = row.length;
+    row.forEach((v, k) => {
+      const x = cx + (k - (m - 1) / 2) * step, y = rowY(i + 1), rad = (last ? c * 0.62 : c / 2);
+      ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2);
+      if (last) {
+        const g = ctx.createLinearGradient(x - rad, y - rad, x + rad, y + rad); g.addColorStop(0, CC.a); g.addColorStop(1, CC.v);
+        ctx.fillStyle = g; ctx.fill(); ctx.fillStyle = '#fff';
+      } else {
+        ctx.fillStyle = i === 0 ? '#fbf3f8' : '#f6f7fb'; ctx.fill(); ctx.lineWidth = Math.max(1.5, c * 0.03); ctx.strokeStyle = CC.line; ctx.stroke();
+        ctx.fillStyle = CC.fg;
+      }
+      ctx.font = '900 ' + Math.round(rad * (last ? 0.95 : 0.92)) + 'px ' + FACES.sans; ctx.fillText(String(v), x, y + rad * 0.04);
+    });
+  });
+  ctx.textBaseline = 'alphabetic';
+  return top + (nr - 1) * step + c + c * 0.25;
+}
+/* r = compat 결과, o = { a, b, other, otherLabel, method } */
+function pairCanvas(r, o) {
+  const W = 1080, H = 1350, cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d');
+  cardBg(ctx, W, H);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = CC.v; ctx.font = '800 38px ' + FACES.sans; ctx.fillText('💞 이름궁합 테스트', W / 2, 150);
+  /* 이름 ♥ 이름 */
+  const sA = o.a, sB = o.b;
+  const z = Math.min(fitFont(ctx, sA, 380, 76, 900), fitFont(ctx, sB, 380, 76, 900));
+  ctx.font = '900 ' + z + 'px ' + FACES.sans;
+  const wa = ctx.measureText(sA).width, wb = ctx.measureText(sB).width, gapW = 110, x0 = (W - wa - wb - gapW) / 2;
+  ctx.textAlign = 'left'; ctx.fillStyle = CC.a; ctx.fillText(sA, x0, 262);
+  ctx.fillStyle = CC.b; ctx.fillText(sB, x0 + wa + gapW, 262);
+  ctx.textAlign = 'center'; ctx.fillStyle = '#ec4899'; ctx.font = '900 54px ' + FACES.sans; ctx.fillText('♥', x0 + wa + gapW / 2, 256);
+  /* 큰 점수 */
+  const g = gradeOf(r.score);
+  ctx.font = '900 210px ' + FACES.sans;
+  const sS = String(r.score), ws = ctx.measureText(sS).width;
+  ctx.font = '900 96px ' + FACES.sans; const wp = ctx.measureText('%').width;
+  const sx = (W - ws - wp - 8) / 2;
+  const gg = ctx.createLinearGradient(sx, 300, sx + ws + wp, 480); gg.addColorStop(0, CC.a); gg.addColorStop(1, CC.v);
+  ctx.textAlign = 'left'; ctx.fillStyle = gg; ctx.font = '900 210px ' + FACES.sans; ctx.fillText(sS, sx, 480);
+  ctx.font = '900 96px ' + FACES.sans; ctx.fillText('%', sx + ws + 8, 480);
+  ctx.textAlign = 'center'; ctx.fillStyle = CC.fg; ctx.font = '900 60px ' + FACES.sans; ctx.fillText(g[1] + ' ' + g[2], W / 2, 572);
+  ctx.fillStyle = CC.mu; fitFont(ctx, o.otherLabel, W - 200, 34, 700); ctx.fillText(o.otherLabel, W / 2, 628);
+  /* 삼각형 */
+  const bottom = drawTri(ctx, r, W / 2, 680, W - 200, 1140 - 680);
+  ctx.fillStyle = CC.mu; ctx.font = '700 28px ' + FACES.sans; ctx.textAlign = 'center';
+  ctx.fillText(METHODS[o.method] + ' 기준 · 재미로 보는 놀이예요', W / 2, Math.min(1200, bottom + 60));
+  ctx.fillText('hwj-hub.github.io/name_compatibility', W / 2, H - 100);
+  return cv;
+}
+/* 여러 명 순위 — list = [{ t:'홍길동 ♥ 김영희', s:94, g:'천생연분' }] (최대 20줄) */
+function rankCanvas(title, sub, list) {
+  const L = list.slice(0, 20), W = 1080, rowH = 74, top = 300;
+  const H = Math.max(1080, top + L.length * rowH + 180);
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d');
+  cardBg(ctx, W, H);
+  ctx.textAlign = 'center'; ctx.fillStyle = CC.v; ctx.font = '800 36px ' + FACES.sans; ctx.fillText('💞 이름궁합 순위', W / 2, 148);
+  ctx.fillStyle = CC.fg; fitFont(ctx, title, W - 220, 56, 900); ctx.fillText(title, W / 2, 218);
+  ctx.fillStyle = CC.mu; fitFont(ctx, sub, W - 220, 28, 700); ctx.fillText(sub, W / 2, 262);
+  L.forEach((it, i) => {
+    const y = top + i * rowH;
+    if (i < 3) { ctx.fillStyle = ['#fdf2f8', '#f5f3ff', '#eff6ff'][i]; rrect(ctx, 100, y + 4, W - 200, rowH - 10, 18); ctx.fill(); }
+    ctx.textAlign = 'center'; ctx.fillStyle = i < 3 ? CC.a : CC.mu; ctx.font = '900 32px ' + FACES.sans;
+    ctx.fillText(i < 3 ? ['🥇', '🥈', '🥉'][i] : String(i + 1), 150, y + 50);
+    ctx.textAlign = 'left'; ctx.fillStyle = CC.fg; fitFont(ctx, it.t, 520, 34, 800, 18); ctx.fillText(it.t, 200, y + 48);
+    ctx.fillStyle = CC.line; rrect(ctx, 735, y + 30, 120, 14, 7); ctx.fill();
+    const gb = ctx.createLinearGradient(735, 0, 855, 0); gb.addColorStop(0, CC.a); gb.addColorStop(1, CC.v);
+    ctx.fillStyle = gb; rrect(ctx, 735, y + 30, Math.max(14, 120 * Math.min(100, it.s) / 100), 14, 7); ctx.fill();
+    ctx.textAlign = 'right'; ctx.fillStyle = CC.fg; ctx.font = '900 38px ' + FACES.sans; ctx.fillText(it.s + '%', W - 110, y + 50);
+  });
+  ctx.textAlign = 'center'; ctx.fillStyle = CC.mu; ctx.font = '700 26px ' + FACES.sans;
+  ctx.fillText('재미로 보는 놀이예요 · hwj-hub.github.io/name_compatibility', W / 2, H - 96);
+  return cv;
+}
+
+/* ════════════════════════════════════════════════════════════
+   인앱 브라우저 (네이버·카카오톡 앱 안에서 열었을 때)
+
+   앱 안 화면은 OS 가 주는 WebView 인데 내려받기 기능이 없다. blob: 주소를 넘기면
+   아무 일도 일어나지 않고 끝난다(카카오 공식 안내: a[download] 는 안드로이드만,
+   iOS 는 data: 주소 방식). 서버가 없는 도구라 응답 헤더로 내려줄 수도 없다.
+     ① 저장은 blob: 대신 data: 주소로 시도한다
+     ② 시작하기 전에 창을 띄워 브라우저를 옮기게 한다 — 다 쓰고 나서 옮기면
+        내용을 다시 써야 한다(내용은 그 탭에만 보관)
+     ③ 아이폰은 사파리를 강제로 열 수 없어 주소 복사 + 메뉴 안내로 간다
+   ════════════════════════════════════════════════════════════ */
+const UA = navigator.userAgent || '';
+const IA = {
+  naver: /NAVER\(inapp/i.test(UA),
+  kakao: /KAKAOTALK/i.test(UA),
+  line: /\bLine\//i.test(UA),
+  ios: /iPhone|iPad|iPod/i.test(UA),
+  android: /Android/i.test(UA)
+};
+IA.on = IA.naver || IA.kakao || IA.line ||
+  /Instagram|FBAN|FBAV|FB_IAB|DaumApps|everytimeApp|band\/|KAKAOSTORY/i.test(UA) ||
+  (IA.android && /;\s*wv\)/i.test(UA));   /* 안드로이드 WebView 표시 */
+
+/* 다른 브라우저로 넘기기. 앱마다 길이 달라 순서대로 고른다 */
+function externalUrl() {
+  const url = location.href;
+  if (IA.kakao) return 'kakaotalk://web/openExternal?url=' + encodeURIComponent(url);
+  if (IA.line) return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'openExternalBrowser=1';
+  /* 안드로이드는 크롬을 직접 연다. 크롬이 없으면 fallback 주소로 되돌아온다 */
+  if (IA.android) return 'intent://' + url.replace(/^https?:\/\//i, '') +
+    '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
+  return '';          /* 아이폰은 사파리를 강제로 열 수 없다 */
+}
+function copyAddr(guide) {
+  const url = location.href;
+  const done = () => toast(guide ? '주소를 복사했습니다. 사파리를 열고 붙여 넣거나, 오른쪽 아래 메뉴에서 「다른 브라우저로 열기」를 누르세요.' : '주소를 복사했습니다.', 5200);
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(done, () => fallbackCopy(url, done)); return; }
+  } catch (e) { /* 아래로 */ }
+  fallbackCopy(url, done);
+}
+function fallbackCopy(text, done) {
+  const t = document.createElement('textarea');
+  t.value = text; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;left:-9999px;top:0';
+  document.body.appendChild(t); t.select(); t.setSelectionRange(0, text.length);
+  try { document.execCommand('copy'); done(); } catch (e) { toast('주소를 길게 눌러 복사해 주세요.', 4200); }
+  t.remove();
+}
+/* 앱 안에서는 blob: 이 통하지 않아 data: 주소로 바꿔 넘긴다.
+   data: 는 문자열이라 너무 크면 앱이 통째로 거부한다 — 프로필 PNG(1MB 안팎)는 넉넉히 들어가게 상한을 둔다 */
+function downloadInApp(blob, name) {
+  const how = () => '위쪽 「' + $('iaGo').textContent + '」를 눌러 주세요.';
+  if (blob.size > 10 * 1024 * 1024) { toast('앱 안에서는 10MB가 넘는 파일을 저장할 수 없습니다. ' + how(), 5600); return; }
+  const go = href => {
+    const a = document.createElement('a');
+    a.href = href; a.download = name; a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+  const fr = new FileReader();
+  fr.onload = () => { try { go(fr.result); } catch (e) { /* 안내로 넘어간다 */ } };
+  fr.onerror = () => toast('앱 안에서는 저장이 막혀 있습니다. ' + how(), 5200);
+  fr.readAsDataURL(blob);
+}
+/* 앱 안에서 열렸으면 작성을 막고 창을 띄운다.
+   띠만 띄워 두면 다 채운 뒤에야 저장이 안 되는 걸 알게 되는데,
+   입력은 그 탭에만 있어서 브라우저를 옮기는 순간 처음부터 다시 써야 한다 */
+function initInApp() {
+  if (!IA.on) return;
+  const app = IA.naver ? '네이버 앱' : IA.kakao ? '카카오톡' : IA.line ? '라인' : '앱';
+  const copyOnly = IA.ios && !IA.kakao && !IA.line;   /* 아이폰은 사파리를 강제로 열 수 없다 */
+  /* 카카오·라인은 앱의 자체 통로(kakaotalk:// · openExternalBrowser)로 기본 브라우저가 열린다.
+     크롬을 콕 집어 여는 것은 안드로이드 intent:// 뿐이라 단추 문구와 순서를 나눈다 */
+  const chromeIntent = IA.android && !IA.kakao && !IA.line;
+
+  document.body.classList.add('inapp');
+  $('iaMsg').textContent = app + ' 안에서는 파일 저장이 안 될 수 있어요.';
+  $('doneInapp').classList.remove('hide');
+
+  $('iaDesc').innerHTML = '<b>' + app + '</b> 안에서 열렸습니다. 이 화면에서는 ' +
+    '<b>결과 그림 저장이 안 될 수 있습니다.</b> 궁합 보기와 링크 복사는 그대로 됩니다.';
+  const steps = copyOnly
+    ? ['아래 <b>주소 복사</b>를 누르세요.',
+       '오른쪽 아래 <b>메뉴</b>에서 「다른 브라우저로 열기」를 누르거나, <b>사파리</b> 주소창에 붙여 넣으세요.']
+    : chromeIntent
+      ? ['아래 <b>크롬에서 열기</b>를 누르세요.',
+         '크롬이 없으면 오른쪽 위 <b>메뉴</b>에서 「다른 브라우저로 열기」를 누르세요.']
+      : ['아래 <b>다른 브라우저로 열기</b>를 누르세요.',
+         '열리지 않으면 ' + (IA.ios ? '화면의' : '오른쪽 위') + ' <b>메뉴</b>에서 「다른 브라우저로 열기」를 누르세요.'];
+  $('iaSteps').innerHTML = steps.map(s => '<li>' + s + '</li>').join('');
+  const label = copyOnly ? '주소 복사' : chromeIntent ? '크롬에서 열기' : '다른 브라우저로 열기';
+  $('iaGo').textContent = label;
+  $('iaGo2').textContent = label;
+  $('doneGo').textContent = label;
+  $('iaSub').textContent = copyOnly
+    ? '사파리에 붙여 넣거나, 오른쪽 아래 메뉴에서 「다른 브라우저로 열기」를 누르세요.'
+    : '궁합 보기·링크 복사는 그대로 돼요. 그림 저장은 브라우저를 옮겨 주세요.';
+
+  /* 윗머리 띠를 ✕ 로 닫았으면 새로 고쳐도 띠는 다시 띄우지 않는다(막는 창은 열 때마다 뜬다) */
+  let hidden = false;
+  try { hidden = sessionStorage.getItem('name_compatibility.iahide') === '1'; } catch (e) { /* 무시 */ }
+  if (hidden) document.body.classList.remove('inapp');
+  /* 궁합은 앱 안에서도 본다 — 막는 창은 띄우지 않고, 그림 저장만 data: 주소로 돌려 받는다(downloadInApp) */
+}
+/* 창이 떠 있는 동안에는 뒤쪽 입력칸을 아예 만지지 못하게 한다 */
+function lockInApp(on) {
+  document.body.classList.toggle('ia-lock', on);
+  const w = document.querySelector('.wrap');
+  if (on) w.setAttribute('inert', ''); else w.removeAttribute('inert');
+  if (!on) $('iaModal').blur();
+}
+/* 아이폰에서 주소를 복사했으면 창 안에서 바로 알려 준다 — 토스트는 창 위에 잠깐 떴다 사라진다 */
+function iaCopied() {
+  $('iaDesc').innerHTML = '주소를 <b>복사했습니다.</b> 이제 <b>사파리</b>를 열고 주소창에 붙여 넣으세요.';
+  $('iaSteps').innerHTML = '<li>홈 화면에서 <b>사파리</b>를 엽니다.</li>' +
+    '<li>주소창을 길게 눌러 <b>붙여넣기</b> 하세요.</li>' +
+    '<li>또는 이 화면 오른쪽 아래 <b>메뉴</b> → 「다른 브라우저로 열기」.</li>';
+}
+
+/* ════════════════════════════════════════════════════════════
+   저장 완료 카드 — 저장이 끝나면 본문 흐름 안에 펼치고 그쪽을 보여 준다(화면을 덮지 않는다)
+   ════════════════════════════════════════════════════════════ */
+const DONE = {
+  goT: 0,
+  show(msg, steps) {
+    $('doneMsg').textContent = msg;
+    $('doneSteps').innerHTML = (steps || []).map(x => '<li>' + x + '</li>').join('');
+    $('doneCard').classList.remove('hide');
+    clearTimeout(this.goT);
+    this.goT = setTimeout(() => $('doneCard').scrollIntoView({ behavior: 'smooth', block: 'center' }), 250);
+  },
+  hide() { $('doneCard').classList.add('hide'); }
+};
+
+/* ════════════════════════════════════════════════════════════
+   화면 — 둘이서(결과 · 숫자 삼각형 · 실험실) · 여러 명(순위 · 궁합표) · 100% 이름 찾기
+   ════════════════════════════════════════════════════════════ */
+const qsa = (s, r) => Array.from((r || document).querySelectorAll(s));
+const S = { m: 'pen', z: true, tab: 'pair', gm: 'me', gk: 'avg', fg: 'f', fs: 'any', fo: 'me', fsur: '김' };
+let CUR = null;      /* 지금 보여 주는 결과 { a, b, m, r:[a먼저, b먼저], ord } */
+let BASE = null;     /* 실험실 기준 이름 { a, b } — 「궁합 보기」를 누른 이름 */
+let GRES = null;     /* 여러 명 결과 */
+let animT = [];
+
+function save() { lsSet('opt', JSON.stringify(S)); }
+function load() {
+  try {
+    const o = JSON.parse(lsGet('opt') || 'null');
+    if (!o) return;
+    if (METHODS[o.m]) S.m = o.m;
+    if (typeof o.z === 'boolean') S.z = o.z;
+    if (['pair', 'group', 'find'].includes(o.tab)) S.tab = o.tab;
+    if (['me', 'all'].includes(o.gm)) S.gm = o.gm;
+    if (['avg', 'max', 'first'].includes(o.gk)) S.gk = o.gk;
+    if (['f', 'm', 'a'].includes(o.fg)) S.fg = o.fg;
+    if (['any', 'one', 'none'].includes(o.fs)) S.fs = o.fs;
+    if (['me', 'them', 'both'].includes(o.fo)) S.fo = o.fo;
+    if (NAMES.s.includes(o.fsur)) S.fsur = o.fsur;
+  } catch (e) { /* 처음 상태로 */ }
+}
+function setSeg(name, v) {
+  qsa('[data-seg="' + name + '"] button').forEach(b => { const on = b.dataset.v === String(v); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+}
+function segClick(name, fn) {
+  const el = document.querySelector('[data-seg="' + name + '"]');
+  el.addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (b && el.contains(b)) { fn(b.dataset.v); setSeg(name, b.dataset.v); save(); } });
+}
+/* 받침 있으면 a, 없으면 b — 「홍길동과」·「김영희와」 */
+const hasJong = w => { const c = String(w).charCodeAt(String(w).length - 1) - 0xAC00; return c >= 0 && c < 11172 && c % 28 !== 0; };
+const jo = (w, a, b) => w + (hasJong(w) ? a : b);
+const enc = s => encodeURIComponent(s);
+const pageUrl = () => location.href.split('#')[0];
+const optNow = () => ({ m: S.m, z: S.z });
+
+/* ── 보기(탭) ── */
+function setTab(t, noSave) {
+  S.tab = t;
+  qsa('.tabs button').forEach(b => { const on = b.dataset.t === t; b.classList.toggle('on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); });
+  $('tPair').classList.toggle('hide', t !== 'pair');
+  $('tGroup').classList.toggle('hide', t !== 'group');
+  $('tFind').classList.toggle('hide', t !== 'find');
+  if (!noSave) save();
+}
+function renderHow() {
+  setSeg('m', S.m); $('chkZ').checked = S.z;
+  $('howCur').textContent = METHODS[S.m] + ' · 00은 ' + (S.z ? '100%' : '0%');
+  $('stkCur').textContent = METHODS[S.m];
+  $('stkC').innerHTML = Array.from('ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㄲㄸㅃㅆㅉ').map(c => '<span>' + c + '<i>' + CONS[S.m][c] + '</i></span>').join('');
+  $('stkV').innerHTML = Array.from(JUNG_L).map(c => '<span>' + c + '<i>' + VOW[c] + '</i></span>').join('');
+}
+
+/* ══ 둘이서 ══ */
+function readPair() {
+  const A = cleanName($('inA').value), B = cleanName($('inB').value);
+  const w = [];
+  if (A.bad || B.bad) w.push('한글 글자만 계산해요. 영어·숫자·낱자(ㅎ 같은 것)는 뺐어요. 영어 이름은 소리 나는 대로 한글로 적어 주세요.');
+  if (A.long || B.long) w.push('이름은 8글자까지만 셌어요.');
+  $('pairWarn').textContent = w.join(' ');
+  $('pairWarn').classList.toggle('hide', !w.length);
+  return [A.name, B.name];
+}
+function runPair(a, b, o) {
+  o = o || {};
+  if (!a || !b) { toast(!a && !b ? '두 사람 이름을 넣어 주세요.' : (!a ? '먼저 쓸 이름' : '두 번째 이름') + '을 넣어 주세요.'); (!a ? $('inA') : $('inB')).focus(); return false; }
+  const m = o.m || S.m, opt = { m, z: S.z };
+  CUR = { a, b, m, r: [compat(a, b, opt), compat(b, a, opt)], ord: o.ord || 0 };
+  if (!o.fromLab) { BASE = { a, b }; renderLab(); }
+  $('resCard').classList.remove('hide'); $('labCard').classList.remove('hide');
+  renderRes(o.anim !== false);
+  if (o.scroll !== false) setTimeout(() => $('resCard').scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+  return true;
+}
+function renderRes(anim) {
+  const c = CUR, r = c.r[c.ord], x = c.ord ? c.b : c.a, y = c.ord ? c.a : c.b;
+  const g = gradeOf(r.score);
+  $('rA').textContent = x; $('rB').textContent = y;
+  $('resInfo').textContent = METHODS[c.m] + (r.hundred ? ' · 00 → 100%' : '');
+  $('rGi').textContent = g[1]; $('rGrade').textContent = g[2]; $('rSub').textContent = g[3];
+  $('ord0L').textContent = c.a + ' 먼저'; $('ord1L').textContent = c.b + ' 먼저';
+  $('ord0S').textContent = c.r[0].score + '%'; $('ord1S').textContent = c.r[1].score + '%';
+  $('ord0').classList.toggle('on', c.ord === 0); $('ord1').classList.toggle('on', c.ord === 1);
+  $('ord0').setAttribute('aria-pressed', c.ord === 0 ? 'true' : 'false'); $('ord1').setAttribute('aria-pressed', c.ord === 1 ? 'true' : 'false');
+  const diff = c.r[0].score - c.r[1].score;
+  $('ordNote').textContent = diff === 0 ? '두 순서 점수가 똑같아요. 어느 쪽을 먼저 써도 같은 궁합이에요.'
+    : '누구 이름을 먼저 쓰느냐에 따라 점수가 달라요(' + (diff > 0 ? c.a : c.b) + ' 먼저가 ' + Math.abs(diff) + '점 높아요). 눌러서 두 계산을 비교해 보세요.';
+  renderTri(r, anim);
+  /* 글자별 풀이 */
+  const seen = new Set();
+  $('plist').innerHTML = r.seq.filter(s => { const k = s.c + s.o; if (seen.has(k)) return false; seen.add(k); return true; }).map(s => {
+    const ps = strokeParts(s.c, c.m);
+    return '<li class="p' + ((s.o + c.ord) % 2) + '"><span class="c">' + esc(s.c) + '</span>' + ps.map(p => p.j + ' ' + p.n).join(' + ') + ' = <b>' + ps.reduce((t, p) => t + p.n, 0) + '</b></li>';
+  }).join('');
+  qsa('#labT button').forEach(bt => bt.classList.toggle('cur', bt.dataset.a === x && bt.dataset.b === y && bt.dataset.m === c.m));
+}
+function renderTri(r, anim) {
+  animT.forEach(clearTimeout); animT = [];
+  const t = $('tri'), last = r.rows.length - 1;
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let h = '<div class="tr ch">' + r.seq.map(s => '<span class="p' + s.o + '">' + esc(s.c) + '</span>').join('') + '</div>';
+  r.rows.forEach((row, i) => {
+    h += '<div class="tr' + (i === 0 ? ' n0' : '') + (i === last ? ' last' : '') + '" data-i="' + i + '">' +
+      row.map((v, k) => {
+        const pv = i ? r.rows[i - 1] : null;
+        const tt = !i ? r.seq[k].c + ' ' + v + '획' : pv.length === row.length ? pv[k] + '의 끝자리 → ' + v : pv[k] + ' + ' + pv[k + 1] + ' = ' + (pv[k] + pv[k + 1]) + ' → ' + v;
+        return '<i title="' + tt + '">' + v + '</i>';
+      }).join('') + '</div>';
+  });
+  t.innerHTML = h;
+  t.setAttribute('aria-label', '계산 과정: ' + r.rows.map(x => x.join(' ')).join(' / ') + ' → ' + r.score + '%');
+  const rows = qsa('.tr', t);
+  if (!anim || reduce) { t.classList.remove('anim'); $('rScore').textContent = r.score; return; }
+  t.classList.add('anim');
+  rows.forEach((el, i) => animT.push(setTimeout(() => el.classList.add('in'), 40 + i * 150)));
+  /* 점수는 마지막 줄이 나올 때 세어 올린다 */
+  const t0 = 40 + rows.length * 150, el = $('rScore');
+  el.textContent = '0';
+  const N = 14;
+  for (let k = 1; k <= N; k++) animT.push(setTimeout(() => { el.textContent = Math.round(r.score * k / N); }, t0 - 300 + k * 30));
+}
+function setOrd(o) { if (!CUR) return; CUR.ord = o; renderRes(true); }
+
+/* ── 실험실 — 성 넣기/빼기 · 애칭 × 순서 × 획수 표 ── */
+function renderLab() {
+  if (!BASE) return;
+  const { a, b } = BASE;
+  const nA = cleanName($('nkA').value).name, nB = cleanName($('nkB').value).name;
+  const [sa, ga] = splitSur(a), [sb, gb] = splitSur(b);
+  const forms = [['이름 그대로', a, b]];
+  if (sa && sb) forms.push(['둘 다 성 빼고', ga, gb]);
+  if (sa) forms.push([a + ' 성만 빼기', ga, b]);
+  if (sb) forms.push([b + ' 성만 빼기', a, gb]);
+  if (nA) forms.push(['첫째 애칭', nA, b]);
+  if (nB) forms.push(['둘째 애칭', a, nB]);
+  if (nA && nB) forms.push(['둘 다 애칭', nA, nB]);
+  /* 같은 이름 조합은 한 번만 */
+  const seenF = new Set(), F = forms.filter(f => { const k = f[1] + '|' + f[2]; if (seenF.has(k) || !f[1] || !f[2]) return false; seenF.add(k); return true; });
+  $('nkAL').textContent = a + ' 애칭'; $('nkBL').textContent = b + ' 애칭';
+  let best = null;
+  const cell = (x, y, m) => {
+    const s = quickScore(x, y, m, S.z);
+    if (!best || s > best.s) best = { s, x, y, m };
+    return '<td><button type="button" data-a="' + esc(x) + '" data-b="' + esc(y) + '" data-m="' + m + '" aria-label="' + esc(x) + ' 먼저 ' + METHODS[m] + ' ' + s + '%">' + s + '</button></td>';
+  };
+  const body = F.map(f => '<tr><td class="k"><b>' + esc(f[1]) + ' · ' + esc(f[2]) + '</b><small>' + esc(f[0]) + '</small></td>' +
+    cell(f[1], f[2], 'pen') + cell(f[2], f[1], 'pen') + cell(f[1], f[2], 'line') + cell(f[2], f[1], 'line') + '</tr>').join('');
+  $('labT').innerHTML = '<thead><tr><th rowspan="2">조합</th><th colspan="2">펜 획수</th><th colspan="2">선 개수</th></tr>' +
+    '<tr><th>앞 먼저</th><th>뒤 먼저</th><th>앞 먼저</th><th>뒤 먼저</th></tr></thead><tbody>' + body + '</tbody>';
+  qsa('#labT button').forEach(bt => { if (+bt.textContent === best.s) bt.classList.add('best'); });
+  $('labBest').innerHTML = '가장 높게 나오는 조합은 <b>' + esc(best.x) + ' → ' + esc(best.y) + '</b>(' + METHODS[best.m] + ') <b>' + best.s + '%</b>예요.' +
+    (best.s < 90 ? ' 애칭이나 별명을 넣어 보면 더 높은 조합이 나올 수도 있어요.' : '');
+}
+function labPick(bt) {
+  const x = bt.dataset.a, y = bt.dataset.b, m = bt.dataset.m;
+  /* 고른 칸의 획수 방식으로 위 스위치도 맞춘다(보이는 결과와 스위치가 어긋나지 않게). 입력칸 이름은 그대로 둔다 */
+  if (m !== S.m) { S.m = m; save(); renderHow(); }
+  runPair(x, y, { m, fromLab: true, scroll: true });
+}
+
+/* ── 공유 · 그림 · 글 ── */
+function shareUrl() {
+  const c = CUR, x = c.ord ? c.b : c.a, y = c.ord ? c.a : c.b;
+  return pageUrl() + '#a=' + enc(x) + '&b=' + enc(y) + (c.m !== 'pen' ? '&m=' + c.m : '') + (S.z ? '' : '&z=0');
+}
+function resultText() {
+  const c = CUR, r = c.r[c.ord], o = c.r[1 - c.ord], x = c.ord ? c.b : c.a, y = c.ord ? c.a : c.b, g = gradeOf(r.score);
+  return '💞 ' + x + ' ♥ ' + y + ' 이름궁합 ' + r.score + '% (' + g[2] + ')\n' + y + ' 먼저 쓰면 ' + o.score + '%';
+}
+function share() {
+  if (!CUR) return;
+  sendLink(resultText() + '\n계산 과정 보기 👇', shareUrl());
+}
+function copyResult() {
+  if (!CUR) return;
+  const r = CUR.r[CUR.ord];
+  const tri = [r.seq.map(s => s.c).join(' ')].concat(r.rows.map(x => x.join(' '))).join('\n');
+  copyText(resultText() + '\n\n' + tri + '\n(' + METHODS[CUR.m] + ' 기준 · 재미로 보는 놀이)\n' + shareUrl(), '결과를 복사했어요. 단톡방이나 메모에 붙여 넣으세요.');
+}
+async function savePng() {
+  if (!CUR) return;
+  const c = CUR, r = c.r[c.ord], o = c.r[1 - c.ord], x = c.ord ? c.b : c.a, y = c.ord ? c.a : c.b;
+  try {
+    const blob = await canvasBlob(pairCanvas(r, { a: x, b: y, method: c.m, otherLabel: y + ' 먼저 쓰면 ' + o.score + '%' }));
+    download(blob, safeName('이름궁합_' + x + '_' + y) + '.png');
+    DONE.show('「' + x + ' ♥ ' + y + '」 결과 그림(PNG)을 저장했어요.', [
+      '휴대폰은 <b>사진첩(갤러리)</b>이나 <b>다운로드</b> 폴더, 컴퓨터는 <b>다운로드</b> 폴더에 있어요.',
+      'SNS 스토리·단톡방에 올릴 때 계산 과정이 같이 보여요.']);
+  } catch (e) { toast('그림을 만들지 못했어요. 다시 눌러 주세요.'); }
+}
+
+/* ══ 여러 명 ══ */
+function parseList(s) {
+  const parts = String(s || '').split(/[\n,，、\/;]+|\s+/).map(x => cleanName(x)).filter(x => x.name);
+  const out = [], seen = new Set();
+  let dup = 0, bad = false;
+  parts.forEach(p => { if (p.bad) bad = true; if (seen.has(p.name)) { dup++; return; } seen.add(p.name); out.push(p.name); });
+  return { list: out.slice(0, 30), dup, bad, over: out.length > 30 };
+}
+function gCountNow() { const p = parseList($('gIn').value); $('gCount').textContent = p.list.length + '명'; return p; }
+const keyOf = (s1, s2) => S.gk === 'first' ? s1 : S.gk === 'max' ? Math.max(s1, s2) : (s1 + s2) / 2;
+const fmtK = v => (Math.round(v * 10) / 10) + '%';
+function runGroup() {
+  const p = gCountNow(), w = [];
+  if (p.bad) w.push('한글이 아닌 글자는 뺐어요.');
+  if (p.dup) w.push('같은 이름 ' + p.dup + '개는 한 번만 셌어요.');
+  if (p.over) w.push('30명까지만 계산했어요.');
+  $('gWarn').textContent = w.join(' '); $('gWarn').classList.toggle('hide', !w.length);
+  const L = p.list;
+  if (L.length < 2 || (S.gm === 'all' && L.length < 3)) { toast(S.gm === 'all' ? '이름을 3명 이상 넣어 주세요.' : '이름을 2명 이상 넣어 주세요(첫 줄이 나).'); $('gIn').focus(); return; }
+  const m = S.m, z = S.z, items = [];
+  if (S.gm === 'me') {
+    const me = L[0];
+    L.slice(1).forEach(x => { const s1 = quickScore(me, x, m, z), s2 = quickScore(x, me, m, z); items.push({ a: me, b: x, s1, s2, k: keyOf(s1, s2) }); });
+  } else {
+    for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) {
+      const s1 = quickScore(L[i], L[j], m, z), s2 = quickScore(L[j], L[i], m, z);
+      items.push({ a: L[i], b: L[j], s1, s2, k: keyOf(s1, s2) });
+    }
+  }
+  items.sort((p, q) => q.k - p.k || Math.max(q.s1, q.s2) - Math.max(p.s1, p.s2) || (p.a + p.b).localeCompare(q.a + q.b, 'ko'));
+  GRES = { mode: S.gm, list: L, items, m, gk: S.gk };
+  renderGroup();
+  $('gRes').classList.remove('hide');
+  setTimeout(() => $('gRes').scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+}
+const GK_L = { avg: '두 순서 평균', max: '높은 쪽 점수', first: '앞사람 먼저 쓴 점수' };
+function renderGroup() {
+  const G = GRES, me = G.mode === 'me';
+  const label = it => me ? it.b : it.a + ' ♥ ' + it.b;
+  $('gTitle').textContent = me ? jo(G.list[0], '과', '와') + ' 잘 맞는 사람' : '우리 모임 베스트 짝';
+  $('gInfo').textContent = (me ? (G.list.length - 1) + '명' : G.items.length + '쌍') + ' · ' + GK_L[G.gk] + ' · ' + METHODS[G.m];
+  $('gTop').innerHTML = G.items.slice(0, 3).map((it, i) => '<button type="button" class="pd" data-i="' + i + '"><span class="md">' + ['🥇', '🥈', '🥉'][i] + '</span><span class="nn">' + esc(label(it)) +
+    '</span><span class="sc">' + fmtK(it.k) + '</span><span class="gl">' + gradeOf(Math.round(it.k))[2] + '</span></button>').join('');
+  const show = G.items.slice(0, me ? 30 : 20);
+  const firstA = it => me ? '나 먼저 ' + it.s1 + '% · ' + it.b + ' 먼저 ' + it.s2 + '%' : it.a + ' 먼저 ' + it.s1 + '% · ' + it.b + ' 먼저 ' + it.s2 + '%';
+  $('gRank').innerHTML = show.map((it, i) => '<li><button type="button" data-i="' + i + '"><span class="no">' + (i + 1) + '</span><span class="nm">' + esc(label(it)) +
+    '<small>' + esc(firstA(it)) + '</small></span><span class="bar"><i style="width:' + Math.min(100, it.k) + '%"></i></span><span class="sc">' + fmtK(it.k) + '</span></button></li>').join('') +
+    (G.items.length > show.length ? '<li class="fine">나머지 ' + (G.items.length - show.length) + '쌍은 궁합표와 「표 복사」에서 볼 수 있어요.</li>' : '');
+  /* 궁합표 — 12명까지(모두 서로) */
+  const useMat = !me && G.list.length <= 12;
+  $('gMatW').classList.toggle('hide', !useMat);
+  if (useMat) {
+    const L = G.list, topS = Math.max(-1, ...G.items.map(it => Math.max(it.s1, it.s2)));   /* 표에서 가장 높은 칸(들) */
+    let h = '<thead><tr><th>왼쪽 먼저</th>' + L.map(n => '<th>' + esc(n) + '</th>').join('') + '</tr></thead><tbody>';
+    L.forEach((x, i) => {
+      h += '<tr><th>' + esc(x) + '</th>' + L.map((y, j) => {
+        if (i === j) return '<td class="self"></td>';
+        const s = quickScore(x, y, G.m, S.z), hot = Math.round(Math.min(100, s) * 0.55);
+        return '<td' + (s === topS ? ' class="top"' : '') + ' style="background:color-mix(in srgb,var(--accent) ' + (s === topS ? 100 : hot) + '%,var(--card))"><button type="button" data-a="' + esc(x) + '" data-b="' + esc(y) + '" aria-label="' + esc(x) + ' 먼저 ' + esc(y) + ' ' + s + '%">' + s + '</button></td>';
+      }).join('') + '</tr>';
+    });
+    $('gMat').innerHTML = h + '</tbody>';
+  }
+}
+function groupPick(i, ab) {
+  let a, b;
+  if (ab) { a = ab[0]; b = ab[1]; } else { const it = GRES.items[i]; a = it.a; b = it.b; }
+  $('inA').value = a; $('inB').value = b;
+  setTab('pair'); runPair(a, b, { m: GRES.m });
+}
+async function saveGPng() {
+  if (!GRES) return;
+  const G = GRES, me = G.mode === 'me';
+  const list = G.items.map(it => ({ t: me ? it.b : it.a + ' ♥ ' + it.b, s: Math.round(it.k), g: '' }));
+  const title = me ? $('gTitle').textContent : '우리 모임 베스트 짝 순위';
+  try {
+    const blob = await canvasBlob(rankCanvas(title, GK_L[G.gk] + ' · ' + METHODS[G.m] + (list.length > 20 ? ' · 상위 20' : ''), list));
+    download(blob, safeName('이름궁합_순위_' + (me ? G.list[0] : G.list.length + '명')) + '.png');
+    DONE.show('궁합 순위 그림(PNG)을 저장했어요.', ['휴대폰은 <b>사진첩(갤러리)</b>이나 <b>다운로드</b> 폴더, 컴퓨터는 <b>다운로드</b> 폴더에 있어요.', '단톡방에 올리면 모두 한눈에 볼 수 있어요.']);
+  } catch (e) { toast('그림을 만들지 못했어요. 다시 눌러 주세요.'); }
+}
+function copyG() {
+  if (!GRES) return;
+  const G = GRES, me = G.mode === 'me';
+  let rows;
+  if (!me && G.list.length <= 12) {
+    rows = [['왼쪽 먼저'].concat(G.list)].concat(G.list.map(x => [x].concat(G.list.map(y => x === y ? '' : quickScore(x, y, G.m, S.z)))));
+    rows.push([]); rows.push(['순위', '짝', '앞사람 먼저', '뒷사람 먼저', GK_L[G.gk]]);
+    G.items.forEach((it, i) => rows.push([i + 1, it.a + ' ♥ ' + it.b, it.s1, it.s2, Math.round(it.k * 10) / 10]));
+  } else {
+    rows = [['순위', me ? '이름' : '짝', me ? G.list[0] + ' 먼저' : '앞사람 먼저', me ? '상대 먼저' : '뒷사람 먼저', GK_L[G.gk]]];
+    G.items.forEach((it, i) => rows.push([i + 1, me ? it.b : it.a + ' ♥ ' + it.b, it.s1, it.s2, Math.round(it.k * 10) / 10]));
+  }
+  copyText(rows.map(r => r.join('\t')).join('\n'), '표를 복사했어요. 엑셀·구글 시트에 붙여 넣으세요.');
+}
+
+/* ══ 100% 이름 찾기 ══ */
+function runFind() {
+  const P = cleanName($('fIn').value), me = P.name;
+  $('fWarn').textContent = P.bad ? '한글이 아닌 글자는 뺐어요.' : ''; $('fWarn').classList.toggle('hide', !P.bad);
+  if (me.length < 2) { toast('내 이름을 성까지 넣어 주세요.'); $('fIn').focus(); return; }
+  const giv = S.fg === 'a' ? Array.from(new Set(NAMES.f.concat(NAMES.m))) : NAMES[S.fg];
+  const surs = S.fs === 'any' ? NAMES.s : S.fs === 'one' ? [S.fsur] : [''];
+  const m = S.m, z = S.z, res = [];
+  surs.forEach(su => giv.forEach(g => {
+    const full = su + g;
+    if (full === me) return;
+    const s1 = quickScore(me, full, m, z), s2 = quickScore(full, me, m, z);
+    const k = S.fo === 'me' ? s1 : S.fo === 'them' ? s2 : Math.min(s1, s2);
+    res.push({ n: full, s1, s2, k });
+  }));
+  res.sort((p, q) => q.k - p.k || Math.max(q.s1, q.s2) - Math.max(p.s1, p.s2) || p.n.localeCompare(q.n, 'ko'));
+  const by = {};
+  res.forEach(r => (by[r.k] = by[r.k] || []).push(r));
+  const keys = Object.keys(by).map(Number).sort((a, b) => b - a);
+  let shown = 0, h = '';
+  for (const k of keys) {
+    if (shown >= 60) break;
+    const list = by[k], take = list.slice(0, Math.max(6, 60 - shown));
+    shown += take.length;
+    h += '<h3>' + k + '% <span>' + list.length + '개' + (take.length < list.length ? ' 가운데 ' + take.length + '개' : '') + '</span></h3><div class="chips">' +
+      take.map(r => '<button type="button" data-n="' + esc(r.n) + '">' + esc(r.n) + (S.fo === 'both' ? '<small>' + r.s1 + '·' + r.s2 + '</small>' : '<small>' + (S.fo === 'me' ? r.s2 : r.s1) + '</small>') + '</button>').join('') + '</div>';
+  }
+  const top = keys[0];
+  const ordL = { me: me + ' 먼저', them: '상대 먼저', both: '어느 순서든(낮은 쪽)' }[S.fo];
+  $('fTitle').textContent = jo(me, '과', '와') + ' 잘 맞는 이름';
+  $('fInfo').textContent = '후보 ' + res.length + '개 · ' + METHODS[m];
+  $('fSum').innerHTML = top >= 99 ? '<b>' + top + '%</b>가 나오는 이름이 <b>' + by[top].length + '개</b> 있어요(' + esc(ordL) + ').' + (top === 100 ? ' 마지막 두 자리가 00이라 100%로 읽은 이름이에요.' : '')
+    : '이 조건에서는 가장 높은 점수가 <b>' + top + '%</b>예요. 순서나 상대 성을 바꿔 보세요.';
+  $('fSum').innerHTML += '<br><small>이름 옆 작은 숫자는 ' + (S.fo === 'both' ? me + ' 먼저 · 상대 먼저 점수예요.' : S.fo === 'me' ? '순서를 바꿔 상대 이름을 먼저 쓴 점수예요.' : '순서를 바꿔 ' + me + ' 이름을 먼저 쓴 점수예요.') + '</small>';
+  $('fList').innerHTML = h;
+  $('fList').dataset.me = me;
+  $('fList').querySelectorAll('small').forEach(s => s.setAttribute('aria-label', S.fo === 'both' ? '두 순서 점수' : '반대 순서 점수'));
+  $('fRes').classList.remove('hide');
+  setTimeout(() => $('fRes').scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+}
+function findPick(n) {
+  const me = $('fList').dataset.me;
+  const [a, b] = S.fo === 'them' ? [n, me] : [me, n];
+  $('inA').value = a; $('inB').value = b;
+  setTab('pair'); runPair(a, b);
+}
+
+/* ── 받은 링크 ── #a=이름&b=이름(&m=line)(&z=0) ── */
+function readHash() {
+  const h = location.hash.replace(/^#/, '');
+  if (!h) return false;
+  const q = {};
+  h.split('&').forEach(kv => { const i = kv.indexOf('='); if (i > 0) { try { q[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); } catch (e) { /* 잘린 링크 */ } } });
+  const a = cleanName(q.a).name, b = cleanName(q.b).name;
+  if (!a || !b) return false;
+  if (METHODS[q.m]) S.m = q.m;
+  if (q.z === '0') S.z = false;
+  renderHow();
+  $('inA').value = a; $('inB').value = b;
+  setTab('pair', true);
+  $('flT').textContent = '「' + a + ' ♥ ' + b + '」 이름궁합이 도착했어요';
+  $('fromLink').classList.remove('hide');
+  runPair(a, b, { scroll: false });
+  return true;
+}
+function goExternal() {
+  const u = externalUrl();
+  if (u) location.href = u; else { copyAddr(true); iaCopied(); }
+}
+
+function init() {
+  load();
+  renderHow();
+  setTab(S.tab, true);
+  qsa('.tabs button').forEach(b => b.addEventListener('click', () => setTab(b.dataset.t)));
+  segClick('m', v => { S.m = v; renderHow(); if (CUR) runPair(CUR.a, CUR.b, { m: v, ord: CUR.ord, scroll: false, fromLab: true }); if (BASE) renderLab(); });
+  $('chkZ').addEventListener('change', () => { S.z = $('chkZ').checked; save(); renderHow(); if (BASE) renderLab(); if (CUR) runPair(CUR.a, CUR.b, { m: CUR.m, ord: CUR.ord, scroll: false, fromLab: true, anim: false }); });
+  $('btnGo').addEventListener('click', () => { const [a, b] = readPair(); runPair(a, b); });
+  $('inA').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('inB').focus(); } });
+  $('inB').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('inB').blur(); const [a, b] = readPair(); runPair(a, b); } });
+  $('btnSwap').addEventListener('click', () => { const t = $('inA').value; $('inA').value = $('inB').value; $('inB').value = t; if (CUR) { const [a, b] = readPair(); if (a && b) runPair(a, b, { scroll: false }); } });
+  $('ord0').addEventListener('click', () => setOrd(0));
+  $('ord1').addEventListener('click', () => setOrd(1));
+  $('labT').addEventListener('click', e => { const b = e.target.closest('button[data-a]'); if (b) labPick(b); });
+  ['nkA', 'nkB'].forEach(id => $(id).addEventListener('input', renderLab));
+  $('btnShare').addEventListener('click', share);
+  $('btnPng').addEventListener('click', savePng);
+  $('btnCopy').addEventListener('click', copyResult);
+  $('flMine').addEventListener('click', () => {
+    $('fromLink').classList.add('hide'); $('inA').value = ''; $('inB').value = '';
+    history.replaceState(null, '', location.pathname + location.search);
+    $('pairCard').scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(() => $('inA').focus(), 350);
+  });
+  window.addEventListener('hashchange', () => { if (readHash()) $('fromLink').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+
+  segClick('gm', v => { S.gm = v; if (GRES) runGroup(); });
+  segClick('gk', v => { S.gk = v; if (GRES) runGroup(); });
+  $('gIn').addEventListener('input', gCountNow);
+  $('btnGroup').addEventListener('click', runGroup);
+  $('btnGSample').addEventListener('click', () => { $('gIn').value = '홍길동\n김영희\n이철수\n성춘향\n이몽룡\n심청'; gCountNow(); runGroup(); });
+  $('gTop').addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) groupPick(+b.dataset.i); });
+  $('gRank').addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) groupPick(+b.dataset.i); });
+  $('gMat').addEventListener('click', e => { const b = e.target.closest('button[data-a]'); if (b) groupPick(-1, [b.dataset.a, b.dataset.b]); });
+  $('btnGPng').addEventListener('click', saveGPng);
+  $('btnGCopy').addEventListener('click', copyG);
+
+  $('fSur').innerHTML = NAMES.s.map(s => '<option value="' + s + '">' + s + '씨</option>').join('');
+  $('fSur').value = S.fsur;
+  $('fSur').addEventListener('change', () => { S.fsur = $('fSur').value; save(); });
+  const fsShow = () => $('fSur').classList.toggle('hide', S.fs !== 'one');
+  segClick('fg', v => { S.fg = v; });
+  segClick('fs', v => { S.fs = v; fsShow(); });
+  segClick('fo', v => { S.fo = v; });
+  setSeg('gm', S.gm); setSeg('gk', S.gk); setSeg('fg', S.fg); setSeg('fs', S.fs); setSeg('fo', S.fo); fsShow();
+  $('fIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('fIn').blur(); runFind(); } });
+  $('btnFind').addEventListener('click', runFind);
+  $('fList').addEventListener('click', e => { const b = e.target.closest('button[data-n]'); if (b) findPick(b.dataset.n); });
+  /* 둘이서에 넣은 내 이름을 찾기 칸으로 */
+  $('tb-find').addEventListener('click', () => { if (!$('fIn').value && $('inA').value) $('fIn').value = cleanName($('inA').value).name; });
+
+  $('doneHide').addEventListener('click', () => DONE.hide());
+  $('iaGo').addEventListener('click', goExternal);
+  $('iaGo2').addEventListener('click', goExternal);
+  $('doneGo').addEventListener('click', goExternal);
+  $('iaStay').addEventListener('click', () => lockInApp(false));
+  $('iaX').addEventListener('click', () => { document.body.classList.remove('inapp'); try { sessionStorage.setItem('name_compatibility.iahide', '1'); } catch (e) { /* 무시 */ } });
+
+  initInApp();
+  readHash();
+}
+init();
+</script>
+</body>
+</html>
